@@ -256,3 +256,50 @@ body.loaded .dock-container { opacity: 1; transform: translateY(0); }
         height: 45px;
     }
 }
+/* --- MOBILE-ONLY FIX --- */
+@media (max-width: 768px) {
+    /* Prevent horizontal scrolling and zoom issues */
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+    }
+
+    /* Shrink the background text so it stays on screen */
+    .bg-text h1 {
+        font-size: 14vw !important; /* Smaller font to prevent overflow */
+        white-space: nowrap;
+        letter-spacing: -1px;
+    }
+
+    /* Scale down the hero image so it doesn't push the dock down */
+    .hero-image-wrapper {
+        width: 70vw !important; 
+        max-height: 50vh; 
+        margin-top: -20px;
+    }
+
+    /* Ensure the dock is fully visible at the bottom without scrolling */
+    .dock-container {
+        bottom: 20px !important;
+        width: 90% !important;
+        left: 5% !important;
+        transform: scale(0.9); /* Slightly smaller dock to fit all icons */
+    }
+
+    .dock {
+        padding: 8px !important;
+        gap: 4px !important;
+    }
+
+    /* Shrink dock items to fit side-by-side on small screens */
+    .dock-item {
+        width: 38px !important;
+        height: 38px !important;
+    }
+
+    .avatar-item {
+        width: 42px !important;
+        height: 42px !important;
+    }
+}
