@@ -197,3 +197,62 @@ body.loaded .hero-image-wrapper { opacity: 1; transform: scale(1); }
 body.loaded .dock-container { opacity: 1; transform: translateY(0); }
 
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes float { 
+    0%, 100% { transform: translateY(0); } 
+    50% { transform: translateY(-10px); } 
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+    /* Adjusts the giant background text size for mobile screens */
+    .bg-text h1 {
+        font-size: 18vw; 
+        line-height: 0.9;
+        -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+    }
+
+    /* Scales the hero image to fit smaller phone displays */
+    .hero-image-wrapper {
+        width: 80vw;
+        transform: translateY(20px); 
+    }
+
+    /* Centers the 'Based in India' card at the bottom of the hero area */
+    .glass-card {
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: max-content;
+        padding: 10px 20px;
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+    /* stacks the navigation brand and status dot vertically */
+    .nav {
+        top: 20px;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .brand { font-size: 0.9rem; }
+    .status-dot { font-size: 0.7rem; }
+
+    /* Shrinks the dock icons slightly for better mobile thumb reach */
+    .dock {
+        padding: 8px 10px;
+        gap: 5px;
+    }
+
+    .dock-item {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .avatar-item {
+        width: 45px;
+        height: 45px;
+    }
+}
