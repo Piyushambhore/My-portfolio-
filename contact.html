@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Piyush</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@400;600&family=Syne:wght@700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* --- CLEAN AESTHETIC VARIABLES --- */
+        :root {
+            --bg-color: #050505;
+            --card-surface: #0f0f10; /* Almost black card */
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #8b8b93;
+            --accent-glow: rgba(255, 255, 255, 0.03);
+            --accent-blue: #2997ff;
+            --radius-lg: 24px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 140px;
+        }
+
+        /* --- SUBTLE MOVING BACKGROUND --- */
+        .ambient-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: 
+                radial-gradient(circle at 0% 0%, rgba(41, 151, 255, 0.08), transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(100, 100, 100, 0.05), transparent 40%);
+            z-index: -1; pointer-events: none;
+        }
+
+        /* --- HEADER --- */
+        header {
+            max-width: 1100px; margin: 0 auto; padding: 100px 24px 60px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(3rem, 6vw, 5rem); /* Responsive giant text */
+            letter-spacing: -2px; margin-bottom: 20px;
+            background: linear-gradient(to right, #fff 40%, #666);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.25rem; color: var(--text-secondary);
+            max-width: 500px; line-height: 1.6;
+        }
+
+        /* --- BENTO GRID LAYOUT --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+            max-width: 1100px; margin: 0 auto; padding: 0 24px;
+        }
+
+        /* --- CARD BASE STYLE --- */
+        .card {
+            background: var(--card-surface);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            position: relative; overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: #141415;
+        }
+
+        h3 { font-size: 1.1rem; color: var(--text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+        p { color: #d1d1d6; line-height: 1.7; font-size: 1.05rem; }
+
+        /* --- SPECIFIC CARDS --- */
+
+        /* 1. BIO (Wide) */
+        .card-bio { grid-column: span 12; md:grid-column: span 8; }
+        .highlight { color: #fff; font-weight: 600; text-decoration-line: underline; text-decoration-color: #333; text-underline-offset: 4px; }
+
+        /* 2. IMAGE / AVATAR (Square) */
+        .card-img { 
+            grid-column: span 12; md:grid-column: span 4; 
+            padding: 0; border: none; background: transparent; 
+        }
+        .profile-pic {
+            width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-lg);
+            filter: grayscale(100%); transition: filter 0.5s;
+        }
+        .card-img:hover .profile-pic { filter: grayscale(0%); }
+
+        /* 3. EDUCATION (Tier 3 Story) */
+        .card-edu { grid-column: span 12; md:grid-column: span 6; }
+        .edu-badge { 
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(41, 151, 255, 0.1); color: var(--accent-blue);
+            padding: 6px 12px; border-radius: 100px; font-size: 0.8rem; font-weight: 600;
+            width: fit-content; margin-bottom: 15px;
+        }
+
+        /* 4. CREATIVE STACK */
+        .card-creative { grid-column: span 12; md:grid-column: span 6; }
+        .icon-row { display: flex; gap: 24px; margin-top: auto; font-size: 2rem; color: #fff; opacity: 0.8; }
+
+        /* 5. CONNECT BAR (Full Width) */
+        .card-connect { 
+            grid-column: span 12; 
+            flex-direction: row; align-items: center; flex-wrap: wrap; gap: 20px;
+            background: linear-gradient(90deg, #0f0f10, #000);
+        }
+        
+        /* Action Buttons */
+        .btn {
+            padding: 14px 28px; border-radius: 100px;
+            font-weight: 600; text-decoration: none; font-size: 0.95rem;
+            transition: all 0.2s; border: 1px solid transparent;
+        }
+        .btn-primary { background: #fff; color: #000; }
+        .btn-primary:hover { background: #e5e5e5; transform: scale(1.02); }
+        
+        .btn-outline { background: transparent; color: #fff; border-color: rgba(255,255,255,0.2); }
+        .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
+
+        /* --- DOCK --- */
+        .dock-container { position: fixed; bottom: 30px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 1000; }
+        .dock {
+            background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(20px);
+            padding: 8px 10px; border-radius: 100px; display: flex; gap: 12px; align-items: center;
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .dock-item {
+            width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            color: #666; text-decoration: none; font-size: 22px; transition: all 0.3s;
+        }
+        .dock-item:hover { background: rgba(255,255,255,0.1); color: white; transform: translateY(-5px); }
+        .dock-item.active { background: #fff; color: black; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+        .avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+        /* Responsive Fixes */
+        @media (min-width: 768px) {
+            .card-bio { grid-column: span 8; }
+            .card-img { grid-column: span 4; }
+            .card-edu { grid-column: span 6; }
+            .card-creative { grid-column: span 6; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg"></div>
+
+    <header>
+        <h1>I'm Piyush.</h1>
+        <p class="subtitle">CSE Student. Creative Developer. <br>Building impactful digital experiences from a quiet room in a busy world.</p>
+    </header>
+
+    <div class="grid">
+
+        <div class="card card-bio">
+            <h3>The Background</h3>
+            <p>
+                I am managing the chaos of a 9-to-4 engineering college routine while silently building a career that defies the <span class="highlight">"Tier-3 College"</span> label.
+                <br><br>
+                My philosophy is simple: <strong>Skill over status.</strong> I spend my nights coding, designing, and learning. I am not just studying Computer Science; I am applying it to build real-world products,I want to run a digital agency, and craft experiences that matter.
+            </p>
+        </div>
+
+        <div class="card card-img">
+            <img src="download.jpg" alt="Piyush" class="profile-pic">
+        </div>
+
+        <div class="card card-edu">
+            <div class="edu-badge"><i class="ph-bold ph-student"></i> Student & Founder</div>
+            <p>
+                Currently pursuing B.Tech in CSE. Side-hustling with <strong>Limitless 360</strong>, my digital agency helping local brands scale.
+            </p>
+            <div style="margin-top:auto; padding-top:20px; font-size:0.9rem; color:#666;">
+                Goal: Top Product Companies 
+            </div>
+        </div>
+
+        <div class="card card-creative">
+            <h3>Creative Outlets</h3>
+            <p>Code is my logic, but art is my escape. I blend technical skills with creative passion.</p>
+            <div class="icon-row">
+                <i class="ph-fill ph-camera" title="Photography"></i>
+                <i class="ph-fill ph-guitar" title="Music"></i>
+                <i class="ph-fill ph-video-camera" title="Content Creation"></i>
+            </div>
+        </div>
+
+        <div class="card card-connect">
+            <div style="flex-grow:1;">
+                <h3 style="margin-bottom:5px; color:#fff;">Let's Work Together</h3>
+                <p style="font-size:0.9rem; color:#888;">Open for freelance & internships.</p>
+            </div>
+            
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <a href="mailto:piyushambhore@outlook.com" class="btn btn-primary">Email Me</a>
+                <a href="https://instagram.com/thedesiengineerr" target="_blank" class="btn btn-outline">Instagram</a>
+                <a href="https://linkedin.com/in/yourprofile" target="_blank" class="btn btn-outline">LinkedIn</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="dock-container">
+        <div class="dock">
+            <a href="index.html" class="dock-item"><i class="ph-fill ph-house"></i></a>
+            <a href="skills.html" class="dock-item"><i class="ph-bold ph-terminal-window"></i></a>
+            <a href="projects.html" class="dock-item"><i class="ph-bold ph-cube"></i></a>
+            
+            <div class="dock-item" style="padding:0; width:auto; background:transparent;">
+                <img src="download.jpg" alt="Me" class="avatar-img" style="width:40px; height:40px;">
+            </div>
+
+            <a href="#" class="dock-item active"><i class="ph-bold ph-user"></i></a>
+        </div>
+    </div>
+
+    <script>
+        // Smooth Staggered Entry
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

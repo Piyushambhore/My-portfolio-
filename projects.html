@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects | Piyush</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* --- PREMIUM VARIABLES --- */
+        :root {
+            --bg-color: #000000;
+            --card-glass: rgba(28, 28, 30, 0.6);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #86868b;
+            --accent-blue: #2997ff;
+            --accent-love: #ff2d55; /* Pink for GF */
+            --accent-netflix: #E50914;
+            --radius-xl: 32px;
+            --radius-md: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 150px;
+        }
+
+        /* --- BACKGROUND GRADIENTS --- */
+        .ambient-light {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: radial-gradient(circle at 10% 10%, rgba(41, 151, 255, 0.15), transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 45, 85, 0.1), transparent 40%);
+            z-index: -1; pointer-events: none;
+        }
+
+        /* --- HEADER --- */
+        header {
+            padding: 80px 24px 50px;
+            max-width: 1200px; margin: 0 auto; text-align: center;
+            animation: fadeDown 1s ease-out;
+        }
+        h1 { font-family: 'Syne', sans-serif; font-size: 4rem; margin-bottom: 10px; letter-spacing: -1px; }
+        .subtitle { color: var(--text-secondary); font-size: 1.2rem; }
+
+        /* --- GRID --- */
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px; max-width: 1200px; margin: 0 auto; padding: 0 24px;
+        }
+
+        /* --- CARD STYLE (Apple Glass) --- */
+        .card {
+            background: var(--card-glass);
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-xl);
+            padding: 30px;
+            position: relative; overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex; flex-direction: column;
+            height: 500px; cursor: pointer;
+        }
+        .card:hover { transform: translateY(-10px) scale(1.02); border-color: rgba(255,255,255,0.2); }
+
+        /* Card Content */
+        .tag {
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            padding: 6px 12px; border-radius: 100px; width: fit-content; margin-bottom: 15px;
+        }
+        .tag.netflix { background: rgba(229, 9, 20, 0.2); color: var(--accent-netflix); }
+        .tag.agency { background: rgba(41, 151, 255, 0.2); color: var(--accent-blue); }
+        .tag.love { background: rgba(255, 45, 85, 0.2); color: var(--accent-love); }
+
+        h3 { font-size: 2rem; font-weight: 700; margin-bottom: 10px; }
+        p { color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
+
+        /* Preview Window */
+        .preview-box {
+            width: 100%; height: 200px; border-radius: var(--radius-md);
+            background: #000; overflow: hidden; position: relative; margin-top: auto;
+        }
+        .preview-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: opacity 0.5s; }
+        .card:hover .preview-img { opacity: 1; transform: scale(1.05); }
+
+        /* --- MODAL (The Note) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(20px);
+            z-index: 2000; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+
+        .modal-card {
+            background: #1c1c1e; width: 90%; max-width: 500px;
+            padding: 40px; border-radius: 32px; border: 1px solid var(--border-glass);
+            text-align: center; transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-overlay.active .modal-card { transform: scale(1); }
+
+        .modal-icon { font-size: 3rem; margin-bottom: 20px; }
+        .modal-btn {
+            display: inline-block; width: 100%; padding: 16px; border-radius: 14px;
+            background: #fff; color: #000; font-weight: 600; text-decoration: none;
+            margin-top: 20px; transition: transform 0.2s; border: none; cursor: pointer; font-size: 1rem;
+        }
+        .modal-btn:hover { transform: scale(1.02); }
+        .modal-btn.secondary { background: #333; color: #fff; margin-top: 10px; }
+
+        /* --- LOVE PRODUCT DETAILS LIST --- */
+        .details-list { text-align: left; background: #2c2c2e; padding: 20px; border-radius: 16px; margin: 20px 0; }
+        .detail-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; color: #ddd; font-size: 0.9rem; }
+        .detail-item i { color: var(--accent-love); }
+
+        /* --- DOCK --- */
+        .dock-container { position: fixed; bottom: 30px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 1000; }
+        .dock {
+            background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(20px);
+            padding: 10px 14px; border-radius: 100px; display: flex; gap: 10px; align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .dock-item {
+            width: 50px; height: 50px; border-radius: 50%; background: #1a1a1a; color: #666;
+            display: flex; justify-content: center; align-items: center; text-decoration: none; font-size: 24px; transition: all 0.3s;
+        }
+        .dock-item:hover { background: #333; color: white; transform: translateY(-8px); }
+        .dock-item.active { background: #fff; color: black; }
+        .avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; background: #a0d4ff; }
+
+        @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="ambient-light"></div>
+
+    <header>
+        <h1>Selected Work</h1>
+        <p class="subtitle">Curated by Piyush.</p>
+    </header>
+
+    <div class="grid">
+
+        <div class="card" onclick="openModal('flix')">
+            <div class="tag netflix">Coming Soon</div>
+            <h3>Memory Flix</h3>
+            <p>A Netflix-style streaming platform for college memories. The ultimate digital archive.</p>
+            
+            <div class="preview-box">
+                <div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:#111;">
+                    <i class="ph-duotone ph-lock-key" style="font-size: 4rem; color: #444;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" onclick="openModal('agency')">
+            <div class="tag agency">Business Model</div>
+            <h3>Limitless 360</h3>
+            <p>Helping local brands go digital. Web design, strategy, and growth.</p>
+            
+            <div class="preview-box">
+                <div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center; background: radial-gradient(circle, #004488, #000);">
+                    <i class="ph-bold ph-rocket-launch" style="font-size: 4rem; color: white;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="border-color: rgba(255, 45, 85, 0.3);" onclick="openProductModal()">
+            <div class="tag love">Custom website</div>
+            <h3>For "Her"</h3>
+            <p>A custom website for your special person. Photos, music, and memories.</p>
+            
+            <div class="preview-box" style="background: linear-gradient(135deg, #3a0b14, #000);">
+                <div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
+                    <i class="ph-fill ph-heart" style="font-size: 5rem; color: var(--accent-love); animation: pulse 1.5s infinite;"></i>
+                </div>
+            </div>
+            
+            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 700; color: var(--accent-love);">₹99 Only</span>
+                <span style="font-size: 0.9rem; color: #fff; background: var(--accent-love); padding: 5px 12px; border-radius: 100px;">Buy Now</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="dock-container">
+        <div class="dock">
+            <a href="index.html" class="dock-item"><i class="ph-fill ph-house"></i></a>
+            <a href="skills.html" class="dock-item"><i class="ph-bold ph-terminal-window"></i></a>
+            <a href="#" class="dock-item active"><i class="ph-bold ph-cube"></i></a>
+            <div class="dock-item" style="padding:0; width:auto; background:transparent;">
+                <img src="download.jpg" alt="Me" class="avatar-img" style="width:48px; height:48px;">
+            </div>
+            <a href="contact.html" class="dock-item"><i class="ph-bold ph-file-text"></i></a>
+            <a href="#" class="dock-item"><i class="ph-bold ph-arrow-up-right"></i></a>
+        </div>
+    </div>
+
+    <div id="redirectModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-icon">⚠️</div>
+            <h2 style="margin-bottom: 10px;">Leaving Portfolio</h2>
+            <p style="color: #aaa; margin-bottom: 20px;">
+                You are about to be redirected to my Instagram/Business page to view this project in detail.
+            </p>
+            <a href="https://instagram.com/yourhandle" id="redirectLink" target="_blank" class="modal-btn">Continue to Instagram</a>
+            <button onclick="closeModal()" class="modal-btn secondary">Cancel</button>
+        </div>
+    </div>
+
+    <div id="productModal" class="modal-overlay">
+        <div class="modal-card" style="text-align: left; max-width: 550px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="color: var(--accent-love);">For Her ❤️</h2>
+                <button onclick="closeModal()" style="background:none; border:none; color:#666; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            
+            <p style="color: #ccc; margin-bottom: 15px;">
+                Get a fully personalized website dedicated to your relationship. The perfect digital gift that lasts forever.
+            </p>
+
+            <div class="details-list">
+                <div class="detail-item"><i class="ph-fill ph-check-circle"></i> <span>Add your favorite photos</span></div>
+                <div class="detail-item"><i class="ph-fill ph-check-circle"></i> <span>Background Music (Your Song)</span></div>
+                <div class="detail-item"><i class="ph-fill ph-check-circle"></i> <span>Custom "Love Letter" Section</span></div>
+                <div class="detail-item"><i class="ph-fill ph-check-circle"></i> <span>Deployment & Hosting Included</span></div>
+            </div>
+
+            <div style="background: rgba(255, 45, 85, 0.1); border: 1px solid var(--accent-love); padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+                <span style="color: var(--accent-love); font-weight: 800; font-size: 1.2rem;">Price: ₹99/-</span>
+                <div style="font-size: 0.8rem; color: #fff; margin-top: 5px;">Includes Customization + Deployment</div>
+            </div>
+
+            <a href="https://instagram.com/thedesiengineerr" target="_blank" class="modal-btn" style="background: var(--accent-love); color: white;">
+                Order Now (DM Me)
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // --- MODAL LOGIC ---
+        
+        function openModal(type) {
+            const modal = document.getElementById('redirectModal');
+            const link = document.getElementById('redirectLink');
+            
+            // Set link based on project (Replace with your actual links)
+            if(type === 'flix') {
+                link.href = "https://instagram.com/thedesiengineerr"; // Link for Memory Flix
+            } else {
+                link.href = "https://instagram.com/thedesiengineerr"; // Link for Agency
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function openProductModal() {
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
+        }
+
+        // Close when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                closeModal();
+            }
+        }
+    </script>
+
+    <style>
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    </style>
+</body>
+</html>

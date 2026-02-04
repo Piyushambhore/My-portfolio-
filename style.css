@@ -1,0 +1,199 @@
+:root {
+    --bg-color: #9c9c9c; /* The grey from your reference */
+    --text-color: #ffffff;
+    --dock-bg: #0f0f0f;
+    --ease-premium: cubic-bezier(0.075, 0.82, 0.165, 1); /* Apple-style easing */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Manrope', sans-serif;
+    overflow: hidden; /* No scroll on homepage */
+    height: 100vh;
+}
+
+/* 1. NOISE & LOADER */
+.noise-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: url('https://grainy-gradients.vercel.app/noise.svg');
+    opacity: 0.06; pointer-events: none; z-index: 999;
+}
+
+.loader {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; z-index: 2000;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    transition: transform 1s var(--ease-premium);
+}
+.loader-text { font-family: 'Syne', sans-serif; font-size: 2rem; margin-bottom: 15px; letter-spacing: 2px; }
+.loader-line { width: 0%; height: 2px; background: white; transition: width 0.8s ease; }
+.loader.hide { transform: translateY(-100%); }
+
+/* 2. NAVIGATION */
+.nav {
+    position: absolute; top: 40px; width: 90%; left: 5%;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 10; opacity: 0; transform: translateY(-20px);
+    transition: all 1s var(--ease-premium) 0.5s;
+}
+.brand { font-weight: 700; letter-spacing: -0.5px; }
+.status-dot {
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;
+    display: flex; align-items: center; gap: 8px; opacity: 0.8;
+}
+.status-dot::before {
+    content: ''; width: 6px; height: 6px; background: #2ecc71; border-radius: 50%;
+    box-shadow: 0 0 8px #2ecc71;
+}
+
+/* 3. HERO SECTION (Parallax) */
+.hero {
+    height: 100vh; width: 100%;
+    display: flex; justify-content: center; align-items: center;
+    perspective: 1000px;
+}
+
+.bg-text {
+    position: absolute; z-index: 1; text-align: center; pointer-events: none;
+}
+.bg-text h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15vw; line-height: 0.85; font-weight: 800;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255,255,255,0.5);
+    opacity: 0; transform: translateY(100px);
+    transition: all 1.5s var(--ease-premium);
+}
+
+.hero-image-wrapper {
+    position: relative; z-index: 2; width: 35vw;
+    opacity: 0; transform: scale(1.1);
+    transition: all 1.5s var(--ease-premium) 0.2s;
+}
+.hero-img {
+    width: 100%; display: block;
+    filter: drop-shadow(0 40px 60px rgba(0,0,0,0.4));
+}
+
+.glass-card {
+    position: absolute; bottom: 15%; left: -10%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 15px 25px; border-radius: 12px;
+    font-size: 0.9rem;
+    animation: float 6s ease-in-out infinite;
+}
+
+/* 4. THE DOCK (Black Pill) */
+.dock-container {
+    position: fixed; bottom: 30px; left: 0; width: 100%;
+    display: flex; justify-content: center; z-index: 1000;
+    opacity: 0; transform: translateY(50px);
+    transition: all 1s var(--ease-premium) 0.8s;
+}
+
+.dock {
+    background-color: var(--dock-bg);
+    padding: 10px 14px;
+    border-radius: 100px; /* Fully rounded ends */
+    display: flex; gap: 10px; align-items: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.dock-item {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background-color: #1a1a1a;
+    color: #666;
+    display: flex; justify-content: center; align-items: center;
+    text-decoration: none; font-size: 24px;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    position: relative;
+}
+
+.dock-item:hover {
+    background-color: #333; color: white;
+    transform: translateY(-8px) scale(1.1);
+}
+
+.dock-item.active {
+    background-color: #d1d1d1; /* The white active state */
+    color: black;
+    box-shadow: 0 0 20px rgba(255,255,255,0.15);
+}
+
+/* Avatar Item */
+.avatar-item { background: transparent !important; width: 55px; height: 55px; padding: 0; }
+.avatar-item:hover { transform: scale(1.15) translateY(-5px); }
+.avatar-img {
+    width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+    background-color: #a0d4ff; border: 2px solid #1a1a1a;
+}
+
+/* ---------------------------------------------------- */
+/* FIXED SOCIAL POPUP (Transparency & Hover Bridge)     */
+/* ---------------------------------------------------- */
+.social-popup {
+    position: absolute;
+    /* FIX 1: Lower the bottom position */
+    bottom: 55px; 
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    
+    /* FIX 2: Glassmorphism (Transparent Blur) */
+    background: rgba(20, 20, 20, 0.6); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    padding: 10px;
+    /* FIX 3: Invisible padding prevents mouse from losing focus */
+    padding-bottom: 25px; 
+    margin-bottom: -15px; 
+    
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    /* Animation */
+    opacity: 0;
+    visibility: hidden; 
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* Hover Logic */
+.group-trigger:hover .social-popup,
+.social-popup:hover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+}
+
+/* Link Styling */
+.social-popup a {
+    color: white;
+    font-size: 20px;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.2s;
+    display: flex; justify-content: center;
+}
+.social-popup a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+/* 5. LOADED STATE */
+body.loaded .nav { opacity: 1; transform: translateY(0); }
+body.loaded .bg-text h1 { opacity: 1; transform: translateY(0); }
+body.loaded .hero-image-wrapper { opacity: 1; transform: scale(1); }
+body.loaded .dock-container { opacity: 1; transform: translateY(0); }
+
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
