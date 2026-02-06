@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Journey | Piyush</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@400;600&family=Syne:wght@700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-surface: #0f0f10;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #8b8b93;
+            --accent-blue: #2997ff;
+            --accent-green: #2ecc71;
+            --accent-orange: #f39c12;
+            --accent-purple: #9b59b6;
+            --accent-red: #e74c3c;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 140px;
+        }
+
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: radial-gradient(circle at 0% 0%, rgba(41, 151, 255, 0.08), transparent 40%), radial-gradient(circle at 100% 100%, rgba(46, 204, 113, 0.05), transparent 40%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 80px 20px 40px;
+        }
+
+        header {
+            margin-bottom: 20px;
+            animation: fadeIn 0.8s ease-out;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            letter-spacing: -2px;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, #fff 40%, #666);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        h1 i {
+            -webkit-text-fill-color: var(--accent-blue);
+            font-size: 0.8em;
+        }
+
+        .subtitle {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* --- AUTH BUTTON --- */
+        .auth-btn {
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .auth-btn.login {
+            background: linear-gradient(135deg, var(--accent-blue), #1a73e8);
+            color: #fff;
+            border: none;
+        }
+
+        .auth-btn.login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(41, 151, 255, 0.3);
+        }
+
+        .auth-btn.logout {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+        }
+
+        .auth-btn.logout:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .auth-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .auth-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+        }
+
+        .auth-indicator i {
+            font-size: 1rem;
+        }
+
+        /* --- LOGIN MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card-surface);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-title i {
+            color: var(--accent-blue);
+        }
+
+        .modal-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .modal-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .modal-error {
+            color: var(--accent-red);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .modal-error.show {
+            display: block;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 14px 24px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, var(--accent-blue), #1a73e8);
+            color: #fff;
+        }
+
+        .modal-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(41, 151, 255, 0.3);
+        }
+
+        .modal-btn.secondary {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+        }
+
+        .modal-btn.secondary:hover {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        /* --- VISITOR NOTICE --- */
+        .visitor-notice {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(41, 151, 255, 0.1));
+            border: 1px solid rgba(155, 89, 182, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .visitor-notice i {
+            font-size: 2rem;
+            color: var(--accent-purple);
+        }
+
+        .visitor-notice-text h3 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .visitor-notice-text p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .visitor-notice.hidden {
+            display: none;
+        }
+
+        /* --- TABS --- */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: var(--card-surface);
+            padding: 6px;
+            border-radius: 100px;
+            border: 1px solid var(--card-border);
+            animation: slideUp 0.5s ease-out 0.1s both;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 100px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* --- SEARCH BAR --- */
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: slideUp 0.5s ease-out 0.15s both;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            background: var(--card-surface);
+            border: 1px solid var(--card-border);
+            border-radius: 100px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-secondary);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .clear-search.visible {
+            display: flex;
+        }
+
+        /* --- TAG CLOUD --- */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            animation: slideUp 0.5s ease-out 0.2s both;
+        }
+
+        .tag-pill {
+            padding: 8px 16px;
+            border-radius: 100px;
+            background: rgba(155, 89, 182, 0.15);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            color: #bb8fce;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-pill:hover {
+            background: rgba(155, 89, 182, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .tag-pill.active {
+            background: var(--accent-purple);
+            color: white;
+            border-color: var(--accent-purple);
+        }
+
+        .tag-count {
+            opacity: 0.7;
+            font-size: 0.75rem;
+        }
+
+        /* --- STREAK SECTION --- */
+        .streak-section {
+            background: var(--card-surface);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            animation: slideUp 0.5s ease-out 0.1s both;
+        }
+
+        .streak-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .streak-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .streak-title i {
+            font-size: 1.3rem;
+            color: var(--accent-orange);
+        }
+
+        .streak-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .streak-stat {
+            text-align: center;
+        }
+
+        .streak-number {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .streak-number.fire {
+            background: linear-gradient(135deg, #f39c12, #e74c3c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s infinite;
+        }
+
+        .streak-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .calendar-container {
+            overflow-x: auto;
+            padding: 4px 0;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            gap: 4px;
+            min-width: 500px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            transform: scale(1.2);
+            z-index: 10;
+        }
+
+        .calendar-day.level-0 {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .calendar-day.level-1 {
+            background: rgba(46, 204, 113, 0.3);
+        }
+
+        .calendar-day.level-2 {
+            background: rgba(46, 204, 113, 0.5);
+        }
+
+        .calendar-day.level-3 {
+            background: rgba(46, 204, 113, 0.7);
+        }
+
+        .calendar-day.level-4 {
+            background: rgba(46, 204, 113, 0.9);
+        }
+
+        .calendar-day.today {
+            box-shadow: 0 0 0 2px var(--accent-blue);
+        }
+
+        .calendar-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .calendar-day:hover .calendar-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .calendar-legend {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-item {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 100px;
+            margin-left: auto;
+        }
+
+        .server-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e74c3c;
+        }
+
+        .server-status.online .dot {
+            background: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        /* --- COMPOSE BOX --- */
+        .compose-box {
+            background: var(--card-surface);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+            animation: slideUp 0.5s ease-out 0.2s both;
+        }
+
+        .compose-box.locked {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .compose-box.hidden {
+            display: none;
+        }
+
+        .compose-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .compose-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--card-border);
+        }
+
+        .compose-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .compose-hint {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .compose-textarea {
+            width: 100%;
+            min-height: 100px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .compose-textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(41, 151, 255, 0.15);
+        }
+
+        .compose-textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .compose-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .compose-tip {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .compose-tip code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .char-count {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .char-count.warning {
+            color: #f39c12;
+        }
+
+        .char-count.danger {
+            color: #e74c3c;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), #1a73e8);
+            color: #fff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(41, 151, 255, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* --- FEED --- */
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .feed-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .feed-empty i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .feed-empty h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        /* --- POST CARD --- */
+        .post-card {
+            background: var(--card-surface);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation: slideUp 0.5s ease-out both;
+        }
+
+        .post-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.15);
+            background: #141415;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .post-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--card-border);
+        }
+
+        .post-meta {
+            flex: 1;
+        }
+
+        .post-author {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .post-handle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .post-time {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .post-content {
+            color: #e5e5e5;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .post-content .hashtag {
+            color: var(--accent-purple);
+            cursor: pointer;
+        }
+
+        .post-content .hashtag:hover {
+            text-decoration: underline;
+        }
+
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .post-tag {
+            padding: 4px 12px;
+            border-radius: 100px;
+            background: rgba(155, 89, 182, 0.15);
+            color: #bb8fce;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .post-tag:hover {
+            background: rgba(155, 89, 182, 0.3);
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .post-actions.hidden {
+            display: none;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            background: rgba(41, 151, 255, 0.1);
+        }
+
+        .action-btn.delete:hover {
+            border-color: #e74c3c;
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .edit-textarea {
+            width: 100%;
+            min-height: 80px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--accent-blue);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+
+        .edit-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+            color: #fff;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        .delete-confirm {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid #e74c3c;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .delete-confirm p {
+            color: #e74c3c;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        .delete-confirm-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* --- ACHIEVEMENTS --- */
+        .achievements-section {
+            background: var(--card-surface);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            animation: slideUp 0.5s ease-out 0.15s both;
+        }
+
+        .achievements-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .achievements-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .achievements-title i {
+            font-size: 1.3rem;
+            color: var(--accent-orange);
+        }
+
+        .achievements-count {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 12px;
+        }
+
+        .achievement {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-md);
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .achievement:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .achievement.locked {
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        .achievement.locked:hover {
+            opacity: 0.6;
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+        }
+
+        .achievement-name {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            line-height: 1.2;
+        }
+
+        .achievement-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            z-index: 100;
+            border: 1px solid var(--card-border);
+        }
+
+        .achievement:hover .achievement-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- POPUP --- */
+        .achievement-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: var(--card-surface);
+            border: 2px solid var(--accent-orange);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            text-align: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(243, 156, 18, 0.3);
+        }
+
+        .achievement-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .achievement-popup-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            animation: bounce 0.6s ease-out;
+        }
+
+        .achievement-popup-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--accent-orange);
+        }
+
+        .achievement-popup-desc {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .achievement-popup-close {
+            background: var(--accent-orange);
+            color: #000;
+            border: none;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .popup-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- DOCK --- */
+        .dock-container {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .dock {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(20px);
+            padding: 8px 10px;
+            border-radius: 100px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .dock-item {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #666;
+            text-decoration: none;
+            font-size: 22px;
+            transition: all 0.3s;
+        }
+
+        .dock-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        .dock-item.active {
+            background: #fff;
+            color: black;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--accent-blue);
+        }
+
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: scale(0);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 60px 16px 40px;
+            }
+
+            .streak-stats {
+                gap: 16px;
+            }
+
+            .streak-number {
+                font-size: 1.5rem;
+            }
+
+            .achievements-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                flex: none;
+                padding: 10px 16px;
+            }
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--card-border);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ambient-bg"></div>
+    <div class="container">
+        <a href="contact.html" class="back-link"><i class="ph-bold ph-arrow-left"></i> Back to About</a>
+
+        <header>
+            <div class="header-content">
+                <h1><i class="ph-fill ph-notebook"></i> My Journey</h1>
+                <p class="subtitle">Daily learnings, achievements, and skill tracking! 🚀</p>
+            </div>
+            <div class="auth-status" id="auth-status">
+                <button class="auth-btn login" id="login-btn" onclick="showLoginModal()">
+                    <i class="ph-bold ph-sign-in"></i> Admin Login
+                </button>
+            </div>
+        </header>
+
+        <!-- Visitor Notice -->
+        <div class="visitor-notice" id="visitor-notice">
+            <i class="ph-fill ph-eye"></i>
+            <div class="visitor-notice-text">
+                <h3>Viewing Mode</h3>
+                <p>You're viewing Piyush's learning journey. Only Piyush can post new entries.</p>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="feed"><i class="ph-bold ph-list"></i> Feed</button>
+            <button class="tab" data-tab="achievements"><i class="ph-bold ph-trophy"></i> Achievements</button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <div class="search-input-wrapper">
+                <i class="ph-bold ph-magnifying-glass search-icon"></i>
+                <input type="text" class="search-input" id="search-input" placeholder="Search entries or #tags...">
+                <button class="clear-search" id="clear-search"><i class="ph-bold ph-x"></i></button>
+            </div>
+        </div>
+
+        <!-- Tag Cloud -->
+        <div class="tag-cloud" id="tag-cloud"></div>
+
+        <!-- FEED PANEL -->
+        <div class="panel active" id="feed-panel">
+            <!-- Streak Section -->
+            <div class="streak-section">
+                <div class="streak-header">
+                    <div class="streak-title"><i class="ph-fill ph-fire"></i> Learning Streak</div>
+                    <div class="streak-stats">
+                        <div class="streak-stat">
+                            <div class="streak-number fire" id="current-streak">0</div>
+                            <div class="streak-label">Current</div>
+                        </div>
+                        <div class="streak-stat">
+                            <div class="streak-number" id="longest-streak">0</div>
+                            <div class="streak-label">Longest</div>
+                        </div>
+                        <div class="streak-stat">
+                            <div class="streak-number" id="total-posts">0</div>
+                            <div class="streak-label">Entries</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="calendar-container">
+                    <div class="calendar-grid" id="calendar-grid"></div>
+                </div>
+                <div class="calendar-legend">
+                    <span>Less</span>
+                    <div class="legend-item" style="background: rgba(255,255,255,0.03);"></div>
+                    <div class="legend-item" style="background: rgba(46,204,113,0.3);"></div>
+                    <div class="legend-item" style="background: rgba(46,204,113,0.5);"></div>
+                    <div class="legend-item" style="background: rgba(46,204,113,0.7);"></div>
+                    <div class="legend-item" style="background: rgba(46,204,113,0.9);"></div>
+                    <span>More</span>
+                    <div class="server-status" id="server-status">
+                        <div class="dot"></div><span>Offline</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compose Box (Only visible when logged in) -->
+            <div class="compose-box hidden" id="compose-box">
+                <div class="compose-header">
+                    <img src="download.jpg" alt="Piyush" class="compose-avatar">
+                    <div class="compose-info">
+                        <div class="compose-name">Piyush</div>
+                        <div class="compose-hint">What did you learn today?</div>
+                    </div>
+                </div>
+                <textarea class="compose-textarea" id="compose-input"
+                    placeholder="Today I learned... Use #tags to categorize!" maxlength="1000"></textarea>
+                <div class="compose-footer">
+                    <div class="compose-tip">💡 Use <code>#hashtags</code> to add tags</div>
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <span class="char-count" id="char-count">0 / 1000</span>
+                        <button class="btn btn-primary" id="post-btn" disabled><i
+                                class="ph-bold ph-paper-plane-tilt"></i> Post</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feed -->
+            <div class="feed" id="feed">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACHIEVEMENTS PANEL -->
+        <div class="panel" id="achievements-panel">
+            <div class="achievements-section" style="margin-bottom:0;">
+                <div class="achievements-header">
+                    <div class="achievements-title"><i class="ph-fill ph-trophy"></i> Achievements</div>
+                    <div class="achievements-count" id="achievements-count">0 / 17 unlocked</div>
+                </div>
+                <div class="achievements-grid" id="achievements-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal">
+            <div class="modal-title"><i class="ph-fill ph-lock"></i> Admin Login</div>
+            <div class="modal-subtitle">Enter your password to post and manage entries.</div>
+            <input type="password" class="modal-input" id="password-input" placeholder="Enter password..."
+                autocomplete="current-password">
+            <div class="modal-error" id="login-error">Invalid password. Try again.</div>
+            <div class="modal-actions">
+                <button class="modal-btn secondary" onclick="hideLoginModal()">Cancel</button>
+                <button class="modal-btn primary" onclick="doLogin()"><i class="ph-bold ph-sign-in"></i> Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement Popup -->
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="achievement-popup" id="achievement-popup">
+        <div class="achievement-popup-icon" id="popup-icon">🏆</div>
+        <div class="achievement-popup-title" id="popup-title">Achievement Unlocked!</div>
+        <div class="achievement-popup-desc" id="popup-desc">You did something amazing!</div>
+        <button class="btn btn-small achievement-popup-close" id="popup-close">Awesome!</button>
+    </div>
+
+    <!-- Dock -->
+    <div class="dock-container">
+        <div class="dock">
+            <a href="index.html" class="dock-item"><i class="ph-fill ph-house"></i></a>
+            <a href="skills.html" class="dock-item"><i class="ph-bold ph-terminal-window"></i></a>
+            <a href="projects.html" class="dock-item"><i class="ph-bold ph-cube"></i></a>
+            <div class="dock-item" style="padding:0; width:auto; background:transparent;"><img src="download.jpg"
+                    alt="Me" class="avatar-img" style="width:40px; height:40px;"></div>
+            <a href="contact.html" class="dock-item"><i class="ph-bold ph-user"></i></a>
+            <a href="journey.html" class="dock-item active"><i class="ph-bold ph-notebook"></i></a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001/api';
+        const TOKEN_KEY = 'journey_auth_token';
+        let isServerOnline = false;
+        let isAuthenticated = false;
+        let currentTag = null;
+        let currentSearch = '';
+
+        // --- AUTH ---
+        function getToken() { return localStorage.getItem(TOKEN_KEY); }
+        function setToken(token) { localStorage.setItem(TOKEN_KEY, token); }
+        function clearToken() { localStorage.removeItem(TOKEN_KEY); }
+
+        function showLoginModal() {
+            document.getElementById('login-modal').classList.add('show');
+            document.getElementById('password-input').focus();
+            document.getElementById('login-error').classList.remove('show');
+        }
+
+        function hideLoginModal() {
+            document.getElementById('login-modal').classList.remove('show');
+            document.getElementById('password-input').value = '';
+        }
+
+        async function doLogin() {
+            const password = document.getElementById('password-input').value;
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    setToken(data.token);
+                    isAuthenticated = true;
+                    hideLoginModal();
+                    updateAuthUI();
+                    await loadData();
+                } else {
+                    document.getElementById('login-error').classList.add('show');
+                }
+            } catch (e) {
+                document.getElementById('login-error').textContent = 'Server offline. Try again later.';
+                document.getElementById('login-error').classList.add('show');
+            }
+        }
+
+        async function doLogout() {
+            try { await fetch(`${API_BASE}/auth/logout`, { method: 'POST', headers: { 'Authorization': `Bearer ${getToken()}` } }); } catch (e) { }
+            clearToken();
+            isAuthenticated = false;
+            updateAuthUI();
+            await loadData();
+        }
+
+        async function verifyAuth() {
+            const token = getToken();
+            if (!token) return false;
+            try {
+                const res = await fetch(`${API_BASE}/auth/verify`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                return data.authenticated;
+            } catch (e) { return false; }
+        }
+
+        function updateAuthUI() {
+            const authStatus = document.getElementById('auth-status');
+            const visitorNotice = document.getElementById('visitor-notice');
+            const composeBox = document.getElementById('compose-box');
+
+            if (isAuthenticated) {
+                authStatus.innerHTML = `
+                    <div class="auth-indicator"><i class="ph-fill ph-check-circle"></i> Logged in</div>
+                    <button class="auth-btn logout" onclick="doLogout()"><i class="ph-bold ph-sign-out"></i> Logout</button>
+                `;
+                visitorNotice.classList.add('hidden');
+                composeBox.classList.remove('hidden');
+            } else {
+                authStatus.innerHTML = `<button class="auth-btn login" onclick="showLoginModal()"><i class="ph-bold ph-sign-in"></i> Admin Login</button>`;
+                visitorNotice.classList.remove('hidden');
+                composeBox.classList.add('hidden');
+            }
+        }
+
+        // --- SERVER CHECK ---
+        async function checkServerStatus() {
+            try {
+                const res = await fetch(`${API_BASE}/streak`, { method: 'GET', signal: AbortSignal.timeout(2000) });
+                if (res.ok) {
+                    isServerOnline = true;
+                    document.getElementById('server-status').classList.add('online');
+                    document.querySelector('#server-status span').textContent = 'Synced';
+                    return true;
+                }
+            } catch (e) { isServerOnline = false; }
+            document.getElementById('server-status').classList.remove('online');
+            document.querySelector('#server-status span').textContent = 'Local Mode';
+            return false;
+        }
+
+        // --- LOCAL STORAGE ---
+        function getLocalPosts() { return JSON.parse(localStorage.getItem('piyush_journey_posts') || '[]'); }
+        function saveLocalPosts(posts) { localStorage.setItem('piyush_journey_posts', JSON.stringify(posts)); }
+        function extractTags(content) { const m = content.match(/#(\w+)/g) || []; return [...new Set(m.map(t => t.toLowerCase()))]; }
+
+        // --- API CALLS ---
+        async function fetchPosts(search = '', tag = '') {
+            if (isServerOnline) {
+                try {
+                    let url = `${API_BASE}/posts`;
+                    const params = new URLSearchParams();
+                    if (search) params.set('search', search);
+                    if (tag) params.set('tag', tag);
+                    if (params.toString()) url += '?' + params;
+                    const res = await fetch(url, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+                    const data = await res.json();
+                    saveLocalPosts(data.posts);
+                    return data;
+                } catch (e) { }
+            }
+            let posts = getLocalPosts();
+            if (search) { const s = search.toLowerCase(); posts = posts.filter(p => p.content.toLowerCase().includes(s) || (p.tags || []).some(t => t.includes(s))); }
+            if (tag) posts = posts.filter(p => (p.tags || []).includes(tag));
+            return { posts, streak: { current: 0, longest: 0 }, achievements: { unlocked: [], locked: [] }, tagCloud: [] };
+        }
+
+        async function createPost(content) {
+            const res = await fetch(`${API_BASE}/posts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+                body: JSON.stringify({ content })
+            });
+            if (res.status === 401) { alert('Session expired. Please login again.'); doLogout(); return null; }
+            return await res.json();
+        }
+
+        async function updatePost(id, content) {
+            const res = await fetch(`${API_BASE}/posts/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+                body: JSON.stringify({ content })
+            });
+            if (res.status === 401) { doLogout(); return null; }
+            return await res.json();
+        }
+
+        async function deletePost(id) {
+            const res = await fetch(`${API_BASE}/posts/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            if (res.status === 401) { doLogout(); return null; }
+            return await res.json();
+        }
+
+        async function fetchCalendar() {
+            if (isServerOnline) { try { return await (await fetch(`${API_BASE}/calendar`)).json(); } catch (e) { } }
+            const posts = getLocalPosts();
+            const calendar = [];
+            for (let i = 89; i >= 0; i--) {
+                const date = new Date(Date.now() - i * 86400000).toISOString().split('T')[0];
+                calendar.push({ date, count: posts.filter(p => p.date.split('T')[0] === date).length });
+            }
+            return { calendar, streak: { current: 0, longest: 0 } };
+        }
+
+        async function fetchAchievements() {
+            if (isServerOnline) { try { return await (await fetch(`${API_BASE}/achievements`)).json(); } catch (e) { } }
+            return { unlocked: [], locked: [], stats: {} };
+        }
+
+        // --- RENDER ---
+        function renderCalendar(data) {
+            const grid = document.getElementById('calendar-grid');
+            const today = new Date().toISOString().split('T')[0];
+            grid.innerHTML = data.map(day => {
+                const level = day.count === 0 ? 0 : day.count === 1 ? 1 : day.count === 2 ? 2 : day.count <= 4 ? 3 : 4;
+                const d = new Date(day.date);
+                return `<div class="calendar-day level-${level} ${day.date === today ? 'today' : ''}" data-date="${day.date}"><div class="calendar-tooltip">${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${day.count} ${day.count === 1 ? 'entry' : 'entries'}</div></div>`;
+            }).join('');
+        }
+
+        function renderTagCloud(tags) {
+            const cloud = document.getElementById('tag-cloud');
+            if (!tags.length) { cloud.innerHTML = ''; return; }
+            cloud.innerHTML = tags.slice(0, 10).map(t => `<div class="tag-pill ${currentTag === t.tag ? 'active' : ''}" data-tag="${t.tag}">${t.tag} <span class="tag-count">${t.count}</span></div>`).join('');
+        }
+
+        function renderAchievements(achievements) {
+            const grid = document.getElementById('achievements-grid');
+            const all = [...achievements.unlocked, ...achievements.locked];
+            document.getElementById('achievements-count').textContent = `${achievements.unlocked.length} / ${all.length} unlocked`;
+            grid.innerHTML = all.map(a => {
+                const locked = achievements.locked.find(l => l.id === a.id);
+                return `<div class="achievement ${locked ? 'locked' : ''}"><div class="achievement-icon">${a.icon}</div><div class="achievement-name">${a.name}</div><div class="achievement-tooltip">${a.description}</div></div>`;
+            }).join('');
+        }
+
+        function updateStats(streak, total) {
+            document.getElementById('current-streak').textContent = streak.current;
+            document.getElementById('longest-streak').textContent = streak.longest;
+            document.getElementById('total-posts').textContent = total;
+            const el = document.getElementById('current-streak');
+            streak.current > 0 ? el.classList.add('fire') : el.classList.remove('fire');
+        }
+
+        function timeAgo(date) {
+            const now = new Date(), past = new Date(date), diff = now - past;
+            const mins = Math.floor(diff / 60000), hrs = Math.floor(diff / 3600000), days = Math.floor(diff / 86400000);
+            if (mins < 1) return 'Just now';
+            if (mins < 60) return `${mins}m ago`;
+            if (hrs < 24) return `${hrs}h ago`;
+            if (days < 7) return `${days}d ago`;
+            return past.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+        function formatContent(content) { return escapeHtml(content).replace(/#(\w+)/g, '<span class="hashtag" data-tag="#$1">#$1</span>'); }
+
+        function renderPosts(posts) {
+            const feed = document.getElementById('feed');
+            if (!posts.length) {
+                feed.innerHTML = `<div class="feed-empty"><i class="ph-fill ph-notebook"></i><h3>${currentSearch || currentTag ? 'No results' : 'No entries yet'}</h3><p>${currentSearch || currentTag ? 'Try a different search' : 'Journey entries will appear here'}</p></div>`;
+                return;
+            }
+            const sorted = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+            feed.innerHTML = sorted.map((p, i) => `
+                <div class="post-card" data-id="${p.id}" style="animation-delay:${i * 0.05}s">
+                    <div class="post-header">
+                        <img src="download.jpg" alt="Piyush" class="post-avatar">
+                        <div class="post-meta"><span class="post-author">Piyush</span><span class="post-handle">@CodeByPiyush</span><span class="post-time"> · ${timeAgo(p.date)}</span></div>
+                    </div>
+                    <div class="post-content" id="content-${p.id}">${formatContent(p.content)}</div>
+                    ${(p.tags || []).length ? `<div class="post-tags">${p.tags.map(t => `<span class="post-tag" data-tag="${t}">${t}</span>`).join('')}</div>` : ''}
+                    <div class="post-actions ${isAuthenticated ? '' : 'hidden'}">
+                        <button class="action-btn" onclick="editPost('${p.id}')"><i class="ph-bold ph-pencil-simple"></i> Edit</button>
+                        <button class="action-btn delete" onclick="confirmDelete('${p.id}')"><i class="ph-bold ph-trash"></i> Delete</button>
+                    </div>
+                    <div id="delete-confirm-${p.id}" style="display:none;"></div>
+                </div>
+            `).join('');
+        }
+
+        function showAchievementPopup(achievement) {
+            document.getElementById('popup-icon').textContent = achievement.icon;
+            document.getElementById('popup-title').textContent = achievement.name;
+            document.getElementById('popup-desc').textContent = achievement.description;
+            document.getElementById('popup-overlay').classList.add('show');
+            document.getElementById('achievement-popup').classList.add('show');
+        }
+
+        // --- ACTIONS ---
+        window.editPost = function (id) {
+            if (!isAuthenticated) return;
+            const posts = getLocalPosts();
+            const post = posts.find(p => p.id === id);
+            if (!post) return;
+            document.getElementById(`content-${id}`).innerHTML = `<textarea class="edit-textarea" id="edit-input-${id}">${escapeHtml(post.content)}</textarea>
+                <div class="edit-actions"><button class="btn btn-small btn-success" onclick="saveEdit('${id}')"><i class="ph-bold ph-check"></i> Save</button><button class="btn btn-small btn-cancel" onclick="loadData()">Cancel</button></div>`;
+            document.getElementById(`edit-input-${id}`).focus();
+        };
+
+        window.saveEdit = async function (id) {
+            const content = document.getElementById(`edit-input-${id}`).value.trim();
+            if (!content) { alert('Content cannot be empty!'); return; }
+            await updatePost(id, content);
+            await loadData();
+        };
+
+        window.confirmDelete = function (id) {
+            if (!isAuthenticated) return;
+            const el = document.getElementById(`delete-confirm-${id}`);
+            el.style.display = 'block';
+            el.innerHTML = `<div class="delete-confirm"><p><i class="ph-bold ph-warning"></i> Delete this entry?</p><div class="delete-confirm-actions"><button class="btn btn-small btn-danger" onclick="doDelete('${id}')"><i class="ph-bold ph-trash"></i> Delete</button><button class="btn btn-small btn-cancel" onclick="cancelDelete('${id}')">Cancel</button></div></div>`;
+        };
+
+        window.cancelDelete = function (id) { document.getElementById(`delete-confirm-${id}`).style.display = 'none'; };
+        window.doDelete = async function (id) { await deletePost(id); await loadData(); };
+
+        // --- LOAD DATA ---
+        async function loadData() {
+            const [postsData, calendarData, achievementsData] = await Promise.all([fetchPosts(currentSearch, currentTag), fetchCalendar(), fetchAchievements()]);
+            renderPosts(postsData.posts);
+            renderCalendar(calendarData.calendar);
+            renderTagCloud(postsData.tagCloud || []);
+            renderAchievements(achievementsData);
+            updateStats(postsData.streak, getLocalPosts().length);
+        }
+
+        // --- EVENT LISTENERS ---
+        const composeInput = document.getElementById('compose-input');
+        const charCount = document.getElementById('char-count');
+        const postBtn = document.getElementById('post-btn');
+        const searchInput = document.getElementById('search-input');
+        const clearSearch = document.getElementById('clear-search');
+        const passwordInput = document.getElementById('password-input');
+
+        composeInput.addEventListener('input', () => {
+            const len = composeInput.value.length;
+            charCount.textContent = `${len} / 1000`;
+            charCount.classList.remove('warning', 'danger');
+            if (len > 900) charCount.classList.add('danger');
+            else if (len > 700) charCount.classList.add('warning');
+            postBtn.disabled = len === 0;
+        });
+
+        postBtn.addEventListener('click', async () => {
+            const content = composeInput.value.trim();
+            if (!content || !isAuthenticated) return;
+            postBtn.disabled = true;
+            postBtn.innerHTML = '<i class="ph-bold ph-spinner"></i> Posting...';
+            const result = await createPost(content);
+            if (result) {
+                composeInput.value = '';
+                charCount.textContent = '0 / 1000';
+                postBtn.innerHTML = '<i class="ph-bold ph-paper-plane-tilt"></i> Post';
+                await loadData();
+                if (result.newAchievements && result.newAchievements.length) {
+                    result.newAchievements.forEach((a, i) => setTimeout(() => showAchievementPopup(a), i * 1500));
+                }
+            } else {
+                postBtn.innerHTML = '<i class="ph-bold ph-paper-plane-tilt"></i> Post';
+                postBtn.disabled = false;
+            }
+        });
+
+        composeInput.addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'Enter' && composeInput.value.trim() && isAuthenticated) postBtn.click(); });
+
+        passwordInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            const val = searchInput.value.trim();
+            clearSearch.classList.toggle('visible', val.length > 0);
+            searchTimeout = setTimeout(async () => { currentSearch = val; await loadData(); }, 300);
+        });
+
+        clearSearch.addEventListener('click', async () => { searchInput.value = ''; currentSearch = ''; clearSearch.classList.remove('visible'); await loadData(); });
+
+        document.getElementById('tag-cloud').addEventListener('click', async e => {
+            if (e.target.classList.contains('tag-pill')) {
+                const tag = e.target.dataset.tag;
+                currentTag = currentTag === tag ? null : tag;
+                await loadData();
+            }
+        });
+
+        document.getElementById('feed').addEventListener('click', async e => {
+            if (e.target.classList.contains('hashtag') || e.target.classList.contains('post-tag')) {
+                const tag = e.target.dataset.tag.replace('#', '');
+                currentTag = tag;
+                searchInput.value = '';
+                currentSearch = '';
+                await loadData();
+            }
+        });
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-panel`).classList.add('active');
+            });
+        });
+
+        document.getElementById('popup-close').addEventListener('click', () => {
+            document.getElementById('popup-overlay').classList.remove('show');
+            document.getElementById('achievement-popup').classList.remove('show');
+        });
+
+        document.getElementById('popup-overlay').addEventListener('click', () => {
+            document.getElementById('popup-overlay').classList.remove('show');
+            document.getElementById('achievement-popup').classList.remove('show');
+        });
+
+        document.getElementById('login-modal').addEventListener('click', e => { if (e.target.id === 'login-modal') hideLoginModal(); });
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkServerStatus();
+            isAuthenticated = await verifyAuth();
+            updateAuthUI();
+            await loadData();
+            setInterval(checkServerStatus, 30000);
+        });
+    </script>
+</body>
+
+</html>

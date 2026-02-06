@@ -303,3 +303,68 @@ body.loaded .dock-container { opacity: 1; transform: translateY(0); }
         height: 42px !important;
     }
 }
+/* ===== Launch Bar : Dynamic Island Style ===== */
+
+.launch-bar{
+  position:fixed;
+  top:12px;
+  left:50%;
+  transform:translateX(-50%);
+  height:36px;
+  width:120px;
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(14px);
+  border-radius:999px;
+  overflow:hidden;
+  z-index:9999;
+  animation:islandExpand 1.2s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+/* Island → Strip */
+@keyframes islandExpand{
+  0%{
+    width:120px;
+    opacity:0;
+  }
+  30%{
+    opacity:1;
+  }
+  100%{
+    width:100%;
+    top:0;
+    border-radius:0;
+  }
+}
+
+/* Text */
+.launch-text{
+  position:absolute;
+  white-space:nowrap;
+  font-family:'Inter','SF Pro Display','Helvetica Neue',Arial,sans-serif;
+  font-size:13px;
+  font-weight:500;
+  letter-spacing:0.45px;
+  color:#111;
+  padding-left:100%;
+  opacity:0;
+  animation:
+    revealText .3s ease forwards 1.1s,
+    scrollText 26s linear infinite 1.4s;
+}
+
+/* Fade-in text */
+@keyframes revealText{
+  to{
+    opacity:1;
+  }
+}
+
+/* Slow marquee */
+@keyframes scrollText{
+  from{
+    transform:translateX(0);
+  }
+  to{
+    transform:translateX(-100%);
+  }
+}

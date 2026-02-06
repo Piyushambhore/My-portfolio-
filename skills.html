@@ -1,28 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skills | Ashwin</title>
-    
+    <title>Skills | Piyush</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600&family=Syne:wght@400;700;800&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         /* --- VARIABLES --- */
         :root {
-            --bg-color: #050505; 
+            --bg-color: #050505;
             --card-bg: rgba(255, 255, 255, 0.03);
             --card-border: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff;
             --text-dim: #9ca3af;
-            --accent-glow: #7b2cbf; /* Purple glow */
-            --accent-learning: #fbbf24; /* Amber */
+            --accent-glow: #7b2cbf;
+            --accent-learning: #fbbf24;
+            --accent-blue: #2997ff;
+            --accent-green: #2ecc71;
+            --accent-purple: #9b59b6;
             --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             background-color: var(--bg-color);
@@ -35,41 +45,138 @@
 
         /* --- AMBIENT BACKGROUND BLOBS --- */
         .blob-cont {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            z-index: -1; pointer-events: none; overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
         }
+
         .blob {
-            position: absolute; border-radius: 50%;
-            filter: blur(80px); opacity: 0.4;
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
             animation: floatBlob 20s infinite alternate;
         }
-        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #4c1d95; }
-        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: #1e3a8a; animation-delay: -5s; }
-        
+
+        .blob-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: #4c1d95;
+        }
+
+        .blob-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 40vw;
+            height: 40vw;
+            background: #1e3a8a;
+            animation-delay: -5s;
+        }
+
         @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(30px, 50px) scale(1.1); }
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(30px, 50px) scale(1.1);
+            }
         }
 
         /* --- HEADER --- */
         header {
-            text-align: center; padding: 100px 20px 60px;
-            opacity: 0; transform: translateY(30px);
+            text-align: center;
+            padding: 100px 20px 40px;
+            opacity: 0;
+            transform: translateY(30px);
             animation: revealUp 1s var(--ease-apple) forwards;
         }
 
         h1 {
             font-family: 'Syne', sans-serif;
             font-size: clamp(3.5rem, 8vw, 6rem);
-            font-weight: 800; line-height: 1;
+            font-weight: 800;
+            line-height: 1;
             background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 15px; letter-spacing: -2px;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: -2px;
         }
 
-        .subtitle { 
-            color: var(--text-dim); font-size: 1.2rem; 
-            max-width: 600px; margin: 0 auto;
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- LEARNING STATS --- */
+        .learning-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0 50px;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: revealUp 1s 0.2s forwards;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- JOURNEY LINK --- */
+        .journey-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            margin: 20px auto 40px;
+            background: linear-gradient(135deg, rgba(41, 151, 255, 0.2), rgba(155, 89, 182, 0.2));
+            border: 1px solid rgba(41, 151, 255, 0.3);
+            border-radius: 100px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            opacity: 0;
+            animation: revealUp 1s 0.3s forwards;
+        }
+
+        .journey-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(41, 151, 255, 0.2);
+            border-color: var(--accent-blue);
+        }
+
+        .journey-link-container {
+            text-align: center;
         }
 
         /* --- GRID LAYOUT --- */
@@ -77,108 +184,351 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 24px;
-            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
         }
 
-        /* --- CARD STYLES (Glassmorphism + 3D) --- */
+        /* --- CARD STYLES --- */
         .card {
             background: var(--card-bg);
-            border-radius: 30px; padding: 40px;
+            border-radius: 30px;
+            padding: 40px;
             border: 1px solid var(--card-border);
-            position: relative; overflow: hidden;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            
-            /* Initial State for Animation */
-            opacity: 0; transform: translateY(50px) scale(0.95);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
             transition: transform 0.1s linear, box-shadow 0.4s ease;
         }
 
-        /* The Glare Effect Layer */
         .card-glare {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent 60%);
-            pointer-events: none; opacity: 0; transition: opacity 0.3s;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1), transparent 60%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
             mix-blend-mode: overlay;
         }
 
-        .card:hover .card-glare { opacity: 1; }
-        
-        /* Content Wrapper */
-        .card-content { position: relative; z-index: 2; pointer-events: none; }
+        .card:hover .card-glare {
+            opacity: 1;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            pointer-events: none;
+        }
 
         .card h3 {
-            font-family: 'Syne', sans-serif; font-size: 1.8rem; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 12px;
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .card p { color: var(--text-dim); font-size: 1rem; line-height: 1.6; margin-bottom: 25px; }
+        .card p {
+            color: var(--text-dim);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
 
         /* --- PILLS & TAGS --- */
-        .tags { display: flex; flex-wrap: wrap; gap: 10px; }
-        .tag {
-            background: rgba(255,255,255,0.05);
-            padding: 10px 18px; border-radius: 100px;
-            font-size: 0.9rem; font-weight: 500;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: background 0.3s;
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .card:hover .tag { background: rgba(255,255,255,0.1); }
 
-        /* --- SPECIAL STATUS STYLES --- */
+        .tag {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag.active {
+            background: rgba(41, 151, 255, 0.2);
+            border-color: var(--accent-blue);
+        }
+
+        .card:hover .tag {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tag-progress {
+            font-size: 0.75rem;
+            color: var(--accent-learning);
+            margin-left: 4px;
+            opacity: 0.8;
+        }
+
+        /* --- STATUS STYLES --- */
         .status-badge {
-            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
-            font-weight: 700; padding: 6px 12px; border-radius: 8px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 8px;
             margin-left: auto;
         }
-        .learning { color: var(--accent-learning); border: 1px solid rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.1); }
-        
+
+        .learning {
+            color: var(--accent-learning);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            background: rgba(251, 191, 36, 0.1);
+        }
+
+        .unlocked {
+            color: var(--accent-green);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            background: rgba(46, 204, 113, 0.1);
+        }
+
         /* Locked Card Overlay */
         .locked-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
-            z-index: 10; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; gap: 15px;
-            opacity: 0; transition: opacity 0.4s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            transition: opacity 0.4s ease;
         }
-        .card.locked { opacity: 0.6; }
-        .card.locked:hover .locked-overlay { opacity: 1; }
+
+        .card.locked {
+            opacity: 0.6;
+        }
+
+        .card.locked:hover .locked-overlay {
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .unlock-hint {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-align: center;
+            max-width: 200px;
+        }
 
         /* --- PROGRESS BAR --- */
         .progress-track {
-            width: 100%; height: 6px; background: rgba(255,255,255,0.1);
-            border-radius: 10px; margin-top: 20px; overflow: hidden;
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
         }
+
         .progress-fill {
-            height: 100%; width: 0%; background: var(--accent-learning);
-            border-radius: 10px; box-shadow: 0 0 10px var(--accent-learning);
+            height: 100%;
+            width: 0%;
+            background: var(--accent-learning);
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--accent-learning);
             transition: width 1.5s ease-out;
         }
 
-        /* --- ANIMATION KEYFRAMES --- */
-        @keyframes revealUp { to { opacity: 1; transform: translateY(0) scale(1); } }
+        .progress-fill.green {
+            background: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
+        }
 
-        /* --- DOCK (Consistent) --- */
+        .progress-fill.blue {
+            background: var(--accent-blue);
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+
+        .progress-fill.purple {
+            background: var(--accent-purple);
+            box-shadow: 0 0 10px var(--accent-purple);
+        }
+
+        /* --- SKILL ITEM --- */
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .skill-item:hover {
+            border-color: var(--card-border);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .skill-icon {
+            font-size: 1.5rem;
+            color: var(--accent-blue);
+        }
+
+        .skill-info {
+            flex: 1;
+        }
+
+        .skill-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .skill-mentions {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .skill-percent {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-learning);
+        }
+
+        /* --- AI BADGE --- */
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(41, 151, 255, 0.2));
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #bb8fce;
+            margin-left: 10px;
+        }
+
+        /* --- ANIMATION KEYFRAMES --- */
+        @keyframes revealUp {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* --- DOCK --- */
         .dock-container {
-            position: fixed; bottom: 30px; left: 0; width: 100%;
-            display: flex; justify-content: center; z-index: 1000;
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 1000;
         }
+
         .dock {
-            background-color: #0f0f0f; padding: 10px 14px;
-            border-radius: 100px; display: flex; gap: 10px; align-items: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1);
+            background-color: #0f0f0f;
+            padding: 10px 14px;
+            border-radius: 100px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .dock-item {
-            width: 50px; height: 50px; border-radius: 50%;
-            background-color: #1a1a1a; color: #666;
-            display: flex; justify-content: center; align-items: center;
-            text-decoration: none; font-size: 24px; transition: all 0.3s;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #1a1a1a;
+            color: #666;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 24px;
+            transition: all 0.3s;
         }
-        .dock-item:hover { background-color: #333; color: white; transform: translateY(-8px) scale(1.1); }
-        .dock-item.active { background-color: #d1d1d1; color: black; box-shadow: 0 0 20px rgba(255,255,255,0.15); }
-        .avatar-item { width: 55px; height: 55px; padding: 0; background: transparent !important; }
-        .avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; background-color: #a0d4ff; border: 2px solid #1a1a1a; }
+
+        .dock-item:hover {
+            background-color: #333;
+            color: white;
+            transform: translateY(-8px) scale(1.1);
+        }
+
+        .dock-item.active {
+            background-color: #d1d1d1;
+            color: black;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+        }
+
+        .avatar-item {
+            width: 55px;
+            height: 55px;
+            padding: 0;
+            background: transparent !important;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            background-color: #a0d4ff;
+            border: 2px solid #1a1a1a;
+        }
+
+        /* --- NO SKILLS PLACEHOLDER --- */
+        .no-skills {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-dim);
+        }
+
+        .no-skills i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .no-skills p {
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .learning-stats {
+                gap: 24px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
+
 <body>
 
     <div class="blob-cont">
@@ -188,83 +538,36 @@
 
     <header>
         <h1>Skills &<br>Passions</h1>
-        <p class="subtitle">My technical arsenal and creative outlets.</p>
+        <p class="subtitle">My technical arsenal, automatically tracked from my learning journey.</p>
     </header>
 
-    <div class="bento-grid">
-
-        <div class="card reveal-on-scroll">
-            <div class="card-glare"></div>
-            <div class="card-content">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3><i class="ph-bold ph-code"></i> Frontend</h3>
-                    <span class="status-badge learning">Learning</span>
-                </div>
-                <p>Building the visual layer. Currently mastering the core trilogy.</p>
-                
-                <div class="tags">
-                    <div class="tag">HTML5</div>
-                    <div class="tag">CSS3</div>
-                    <div class="tag">JavaScript</div>
-                </div>
-
-                <div style="margin-top:20px">
-                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#888; margin-bottom:5px;">
-                        <span>Proficiency</span>
-                        <span>45%</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" style="width: 45%;"></div>
-                    </div>
-                </div>
-            </div>
+    <!-- Learning Stats -->
+    <div class="learning-stats">
+        <div class="stat-item">
+            <div class="stat-number" id="total-skills">0</div>
+            <div class="stat-label">Skills Tracked</div>
         </div>
-
-        <div class="card reveal-on-scroll" style="border-color: rgba(155, 89, 182, 0.4);">
-            <div class="card-glare"></div>
-            <div style="position:absolute; top:20%; right:-20%; width:200px; height:200px; background:#9b59b6; filter:blur(100px); opacity:0.3;"></div>
-            
-            <div class="card-content">
-                <h3><i class="ph-bold ph-paint-brush-broad"></i> Creative Soul</h3>
-                <p>Where logic meets art. My hobbies fuel my coding.</p>
-                <div class="tags">
-                    <div class="tag"><i class="ph-bold ph-guitar"></i> Guitar</div>
-                    <div class="tag"><i class="ph-bold ph-film-strip"></i> Editing</div>
-                    <div class="tag"><i class="ph-bold ph-pen-nib"></i> Writing</div>
-                </div>
-            </div>
+        <div class="stat-item">
+            <div class="stat-number" id="total-entries">0</div>
+            <div class="stat-label">Journal Entries</div>
         </div>
-
-        <div class="card locked reveal-on-scroll">
-            <div class="locked-overlay">
-                <i class="ph-fill ph-lock-key" style="font-size: 3rem; color: #fff;"></i>
-                <span style="letter-spacing:2px; font-weight:bold;">LOCKED</span>
-            </div>
-            <div class="card-content">
-                <h3><i class="ph-bold ph-database"></i> Backend</h3>
-                <p>Server-side architecture.</p>
-                <div class="tags" style="opacity: 0.3;">
-                    <div class="tag">Node.js</div>
-                    <div class="tag">Python</div>
-                </div>
-            </div>
+        <div class="stat-item">
+            <div class="stat-number" id="learning-streak">0</div>
+            <div class="stat-label">Day Streak</div>
         </div>
+    </div>
 
-        <div class="card locked reveal-on-scroll">
-            <div class="locked-overlay">
-                <i class="ph-fill ph-lock-key" style="font-size: 3rem; color: #fff;"></i>
-                <span style="letter-spacing:2px; font-weight:bold;">LOCKED</span>
-            </div>
-            <div class="card-content">
-                <h3><i class="ph-bold ph-cloud"></i> DevOps</h3>
-                <p>Scaling to the world.</p>
-                <div class="tags" style="opacity: 0.3;">
-                    <div class="tag">AWS</div>
-                    <div class="tag">Docker</div>
-                </div>
-            </div>
-        </div>
+    <!-- Journey Link -->
+    <div class="journey-link-container">
+        <a href="journey.html" class="journey-link">
+            <i class="ph-bold ph-notebook"></i>
+            Log Your Learning
+            <span class="ai-badge"><i class="ph-fill ph-robot"></i> Auto-Track</span>
+        </a>
+    </div>
 
+    <div class="bento-grid" id="skills-grid">
+        <!-- Cards will be dynamically generated -->
     </div>
 
     <div class="dock-container">
@@ -275,62 +578,277 @@
             <div class="dock-item avatar-item">
                 <img src="download.jpg" alt="Me" class="avatar-img">
             </div>
-            <a href="assets/resume.pdf" class="dock-item"><i class="ph-bold ph-file-text"></i></a>
-            <a href="https://github.com" target="_blank" class="dock-item"><i class="ph-bold ph-github-logo"></i></a>
-            <div class="dock-item group-trigger"><i class="ph-bold ph-arrow-up-right"></i></div>
+            <a href="contact.html" class="dock-item"><i class="ph-bold ph-user"></i></a>
+            <a href="journey.html" class="dock-item"><i class="ph-bold ph-notebook"></i></a>
         </div>
     </div>
 
     <script>
-        // 1. SCROLL REVEAL (The "Hide and Come" Effect)
-        // Elements fade in nicely as they load
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    // Add a staggered delay based on index
-                    entry.target.style.animationDelay = `${index * 0.15}s`;
-                    entry.target.style.animation = `revealUp 1s cubic-bezier(0.25, 1, 0.5, 1) forwards`;
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
+        const API_BASE = 'http://localhost:3001/api';
 
-        document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+        const CATEGORY_CONFIG = {
+            frontend: {
+                name: 'Frontend',
+                icon: 'code',
+                color: 'blue',
+                description: 'Building the visual layer. The user interface magic.',
+                unlockHint: 'Start posting about HTML, CSS, JavaScript to unlock!'
+            },
+            backend: {
+                name: 'Backend',
+                icon: 'database',
+                color: 'green',
+                description: 'Server-side architecture and API development.',
+                unlockHint: 'Post about Node.js, Python, databases to unlock!'
+            },
+            devops: {
+                name: 'DevOps',
+                icon: 'cloud',
+                color: 'purple',
+                description: 'Scaling to the world with cloud and containers.',
+                unlockHint: 'Post about Docker, AWS, Git to unlock!'
+            },
+            design: {
+                name: 'Design',
+                icon: 'paint-brush-broad',
+                color: 'purple',
+                description: 'Where logic meets art. UI/UX excellence.',
+                unlockHint: 'Post about Figma, UI design to unlock!'
+            },
+            fundamentals: {
+                name: 'Fundamentals',
+                icon: 'book-open',
+                color: 'blue',
+                description: 'Core programming concepts and algorithms.',
+                unlockHint: 'Post about DSA, algorithms to unlock!'
+            }
+        };
 
-        // 2. 3D TILT EFFECT WITH GLARE (Apple Style)
-        const cards = document.querySelectorAll('.card');
-
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+        // Creative Soul card (static)
+        const STATIC_CARDS = `
+            <div class="card reveal-on-scroll" style="border-color: rgba(155, 89, 182, 0.4);">
+                <div class="card-glare"></div>
+                <div style="position:absolute; top:20%; right:-20%; width:200px; height:200px; background:#9b59b6; filter:blur(100px); opacity:0.3;"></div>
                 
-                // Calculate percentages for glare position
-                const xPercent = (x / rect.width) * 100;
-                const yPercent = (y / rect.height) * 100;
+                <div class="card-content">
+                    <h3><i class="ph-bold ph-paint-brush-broad"></i> Creative Soul</h3>
+                    <p>Where logic meets art. My hobbies fuel my coding.</p>
+                    <div class="tags">
+                        <div class="tag"><i class="ph-bold ph-guitar"></i> Guitar</div>
+                        <div class="tag"><i class="ph-bold ph-film-strip"></i> Editing</div>
+                        <div class="tag"><i class="ph-bold ph-pen-nib"></i> Writing</div>
+                    </div>
+                </div>
+            </div>
+        `;
 
-                // Move the glare background
-                const glare = card.querySelector('.card-glare');
-                if(glare) {
-                    glare.style.background = `radial-gradient(circle at ${xPercent}% ${yPercent}%, rgba(255,255,255,0.15), transparent 50%)`;
-                }
+        async function fetchSkillsData() {
+            try {
+                const [postsRes, skillsRes, streakRes] = await Promise.all([
+                    fetch(`${API_BASE}/posts`),
+                    fetch(`${API_BASE}/skills`),
+                    fetch(`${API_BASE}/streak`)
+                ]);
 
-                // 3D Rotation
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / 15) * -1;
-                const rotateY = (x - centerX) / 15;
+                const postsData = await postsRes.json();
+                const skillsData = await skillsRes.json();
+                const streakData = await streakRes.json();
 
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                return {
+                    posts: postsData.posts || [],
+                    skills: skillsData.skills || {},
+                    skillProgress: skillsData.skillProgress || {},
+                    streak: streakData
+                };
+            } catch (error) {
+                console.log('Server offline, showing default cards');
+                return null;
+            }
+        }
+
+        function createSkillCard(category, categoryData, config) {
+            const hasSkills = categoryData.skills && categoryData.skills.length > 0;
+            const isLocked = !hasSkills;
+            const avgProgress = categoryData.averageProgress || 0;
+
+            const skillsHtml = hasSkills
+                ? categoryData.skills.slice(0, 5).map(skill => `
+                    <div class="skill-item">
+                        <i class="ph-bold ph-${skill.icon || 'code'} skill-icon"></i>
+                        <div class="skill-info">
+                            <div class="skill-name">${skill.name}</div>
+                            <div class="skill-mentions">${skill.mentions} mention${skill.mentions !== 1 ? 's' : ''}</div>
+                        </div>
+                        <div class="skill-percent">${skill.percentage}%</div>
+                    </div>
+                `).join('')
+                : '';
+
+            const tagsHtml = hasSkills
+                ? categoryData.skills.slice(0, 4).map(s => `<div class="tag active">${s.name}</div>`).join('')
+                : `<div class="tags" style="opacity: 0.3;">
+                    <div class="tag">Skill 1</div>
+                    <div class="tag">Skill 2</div>
+                   </div>`;
+
+            return `
+                <div class="card ${isLocked ? 'locked' : ''} reveal-on-scroll">
+                    ${isLocked ? `
+                        <div class="locked-overlay">
+                            <i class="ph-fill ph-lock-key" style="font-size: 3rem; color: #fff;"></i>
+                            <span style="letter-spacing:2px; font-weight:bold;">LOCKED</span>
+                            <span class="unlock-hint">${config.unlockHint}</span>
+                        </div>
+                    ` : ''}
+                    <div class="card-glare"></div>
+                    <div class="card-content">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h3><i class="ph-bold ph-${config.icon}"></i> ${config.name}</h3>
+                            ${hasSkills ? `<span class="status-badge ${avgProgress >= 30 ? 'unlocked' : 'learning'}">${avgProgress >= 30 ? 'Growing' : 'Learning'}</span>` : ''}
+                        </div>
+                        <p>${config.description}</p>
+                        
+                        ${hasSkills ? skillsHtml : tagsHtml}
+
+                        ${hasSkills ? `
+                            <div style="margin-top:20px">
+                                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#888; margin-bottom:5px;">
+                                    <span>Average Proficiency</span>
+                                    <span>${avgProgress}%</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill ${config.color}" style="width: ${avgProgress}%;"></div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function renderSkills() {
+            const grid = document.getElementById('skills-grid');
+            const data = await fetchSkillsData();
+
+            if (!data) {
+                // Server offline - show default
+                grid.innerHTML = `
+                    <div class="card reveal-on-scroll">
+                        <div class="card-glare"></div>
+                        <div class="card-content">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <h3><i class="ph-bold ph-code"></i> Frontend</h3>
+                                <span class="status-badge learning">Learning</span>
+                            </div>
+                            <p>Building the visual layer. Currently mastering the core trilogy.</p>
+                            <div class="tags">
+                                <div class="tag">HTML5</div>
+                                <div class="tag">CSS3</div>
+                                <div class="tag">JavaScript</div>
+                            </div>
+                            <div style="margin-top:20px">
+                                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#888; margin-bottom:5px;">
+                                    <span>Proficiency</span>
+                                    <span>45%</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: 45%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ${STATIC_CARDS}
+                    <div class="card locked reveal-on-scroll">
+                        <div class="locked-overlay">
+                            <i class="ph-fill ph-lock-key" style="font-size: 3rem; color: #fff;"></i>
+                            <span style="letter-spacing:2px; font-weight:bold;">LOCKED</span>
+                            <span class="unlock-hint">Start the Journey server to track skills!</span>
+                        </div>
+                        <div class="card-content">
+                            <h3><i class="ph-bold ph-database"></i> Backend</h3>
+                            <p>Server-side architecture.</p>
+                            <div class="tags" style="opacity: 0.3;">
+                                <div class="tag">Node.js</div>
+                                <div class="tag">Python</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                initCardEffects();
+                return;
+            }
+
+            // Update stats
+            const totalSkills = Object.keys(data.skillProgress).length;
+            document.getElementById('total-skills').textContent = totalSkills;
+            document.getElementById('total-entries').textContent = data.posts.length;
+            document.getElementById('learning-streak').textContent = data.streak.current || 0;
+
+            // Generate category cards
+            let cardsHtml = '';
+
+            for (const [catId, config] of Object.entries(CATEGORY_CONFIG)) {
+                const categoryData = data.skills[catId] || { skills: [], averageProgress: 0 };
+                cardsHtml += createSkillCard(catId, categoryData, config);
+            }
+
+            // Add Creative Soul card
+            cardsHtml += STATIC_CARDS;
+
+            grid.innerHTML = cardsHtml;
+            initCardEffects();
+        }
+
+        function initCardEffects() {
+            // Scroll reveal
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationDelay = `${index * 0.15}s`;
+                        entry.target.style.animation = `revealUp 1s cubic-bezier(0.25, 1, 0.5, 1) forwards`;
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+
+            // 3D Tilt Effect
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const xPercent = (x / rect.width) * 100;
+                    const yPercent = (y / rect.height) * 100;
+
+                    const glare = card.querySelector('.card-glare');
+                    if (glare) {
+                        glare.style.background = `radial-gradient(circle at ${xPercent}% ${yPercent}%, rgba(255,255,255,0.15), transparent 50%)`;
+                    }
+
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / 15) * -1;
+                    const rotateY = (x - centerX) / 15;
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+                    const glare = card.querySelector('.card-glare');
+                    if (glare) glare.style.background = 'transparent';
+                });
             });
+        }
 
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
-                const glare = card.querySelector('.card-glare');
-                if(glare) glare.style.background = 'transparent'; // Turn off glare
-            });
-        });
+        // Init
+        document.addEventListener('DOMContentLoaded', renderSkills);
+
+        // Refresh every 30 seconds
+        setInterval(renderSkills, 30000);
     </script>
 </body>
+
 </html>

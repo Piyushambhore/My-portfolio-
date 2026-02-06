@@ -1,0 +1,9 @@
+- [x] Add "Join Startup" button to the connect card in contact.html
+- [x] Add modal HTML structure with form (name, email, message, checkbox for joining startup)
+- [x] Add CSS for modal styling to match the dark theme
+- [x] Add JavaScript for opening/closing the modal
+- [x] Implement automated email sending with EmailJS
+- [x] Configure EmailJS service ID, public key, and template ID
+- [x] Update email address to limitless260help@gmail.com
+- [x] Fix EmailJS configuration issues (public key and template ID)
+- [x] Test automated email functionality

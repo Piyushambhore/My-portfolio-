@@ -1,0 +1,12 @@
+{
+  "name": "journey-backend",
+  "version": "1.0.0",
+  "description": "Mini backend for Journey learning tracker",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "author": "Piyush",
+  "license": "MIT"
+}
