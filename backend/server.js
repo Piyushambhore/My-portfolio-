@@ -24,68 +24,41 @@ const PORT = process.env.PORT || 3001;
 const DATA_DIR = path.join(__dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'journey.json');
 const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
+const VISITOR_FILE = path.join(DATA_DIR, 'visitors.json');
 
 // ============================================
-// AUTHENTICATION SYSTEM (SECURE)
+// AUTHENTICATION SYSTEM
 // ============================================
-
-// Get password from environment variable (NEVER hardcode!)
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'changeme123';
 const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
-
-// Active sessions (in-memory)
 const activeSessions = new Map();
-const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+const SESSION_DURATION = 24 * 60 * 60 * 1000;
 
 function initializeConfig() {
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-
-    // Create or update config with hashed password
     const hashedPassword = hashPassword(ADMIN_PASSWORD);
-    const config = {
-        passwordHash: hashedPassword,
-        adminName: 'Piyush',
-        lastUpdated: new Date().toISOString()
-    };
+    const config = { passwordHash: hashedPassword, adminName: 'Piyush', lastUpdated: new Date().toISOString() };
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
     return config;
 }
 
 function getConfig() {
-    try {
-        if (fs.existsSync(CONFIG_FILE)) {
-            return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
-        }
-    } catch (e) { }
+    try { if (fs.existsSync(CONFIG_FILE)) return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8')); } catch (e) { }
     return initializeConfig();
 }
 
-function hashPassword(password) {
-    // Use HMAC with session secret for extra security
-    return crypto.createHmac('sha256', SESSION_SECRET).update(password).digest('hex');
-}
-
-function generateSessionToken() {
-    return crypto.randomBytes(48).toString('hex');
-}
+function hashPassword(password) { return crypto.createHmac('sha256', SESSION_SECRET).update(password).digest('hex'); }
+function generateSessionToken() { return crypto.randomBytes(48).toString('hex'); }
 
 function verifyPassword(password) {
     const config = getConfig();
     const hashedInput = hashPassword(password);
-    // Timing-safe comparison to prevent timing attacks
-    try {
-        return crypto.timingSafeEqual(Buffer.from(hashedInput), Buffer.from(config.passwordHash));
-    } catch (e) {
-        return false;
-    }
+    try { return crypto.timingSafeEqual(Buffer.from(hashedInput), Buffer.from(config.passwordHash)); } catch (e) { return false; }
 }
 
 function createSession() {
     const token = generateSessionToken();
-    activeSessions.set(token, {
-        createdAt: Date.now(),
-        expiresAt: Date.now() + SESSION_DURATION
-    });
+    activeSessions.set(token, { createdAt: Date.now(), expiresAt: Date.now() + SESSION_DURATION });
     return token;
 }
 
@@ -93,35 +66,49 @@ function verifySession(token) {
     if (!token) return false;
     const session = activeSessions.get(token);
     if (!session) return false;
-    if (Date.now() > session.expiresAt) {
-        activeSessions.delete(token);
-        return false;
-    }
+    if (Date.now() > session.expiresAt) { activeSessions.delete(token); return false; }
     return true;
 }
 
 function getAuthToken(req) {
     const authHeader = req.headers['authorization'];
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-        return authHeader.slice(7);
-    }
-    return null;
+    return authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
 }
 
-function isAuthenticated(req) {
-    return verifySession(getAuthToken(req));
-}
+function isAuthenticated(req) { return verifySession(getAuthToken(req)); }
 
-// Clean up expired sessions periodically
 setInterval(() => {
     const now = Date.now();
-    for (const [token, session] of activeSessions) {
-        if (now > session.expiresAt) activeSessions.delete(token);
-    }
+    for (const [token, session] of activeSessions) if (now > session.expiresAt) activeSessions.delete(token);
 }, 60000);
 
 // ============================================
-// SKILL TRACKING SYSTEM
+// VISITOR ENGAGEMENT SYSTEM
+// ============================================
+
+function getVisitorData() {
+    try {
+        if (fs.existsSync(VISITOR_FILE)) return JSON.parse(fs.readFileSync(VISITOR_FILE, 'utf8'));
+    } catch (e) { }
+    return {
+        totalVisitors: 0,
+        reactions: {},          // { projectId: { likes: 0, loves: 0 } }
+        feedback: [],           // { id, message, rating, timestamp, ip }
+        musicRequests: [],      // { id, song, artist, requestedBy, timestamp, votes }
+        visitorLog: []          // Last 100 visitors with timestamps
+    };
+}
+
+function saveVisitorData(data) {
+    fs.writeFileSync(VISITOR_FILE, JSON.stringify(data, null, 2));
+}
+
+function generateVisitorId() {
+    return 'v_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
+
+// ============================================
+// SKILL DEFINITIONS & ACHIEVEMENTS
 // ============================================
 
 const SKILL_DEFINITIONS = {
@@ -165,13 +152,10 @@ const ACHIEVEMENTS = {
     skill_master: { id: 'skill_master', name: 'Skill Master', icon: '🎓', description: '50% in any skill', condition: (s) => s.hasAdvancedSkill },
 };
 
-// Initialize data directory
+// Initialize data files
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify({ posts: [], unlockedAchievements: [], skillProgress: {}, streak: { current: 0, longest: 0 } }));
-}
-
-// Initialize config
+if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, JSON.stringify({ posts: [], unlockedAchievements: [], skillProgress: {}, streak: { current: 0, longest: 0 } }));
+if (!fs.existsSync(VISITOR_FILE)) saveVisitorData({ totalVisitors: 0, reactions: {}, feedback: [], musicRequests: [], visitorLog: [] });
 initializeConfig();
 
 function readData() {
@@ -180,11 +164,7 @@ function readData() {
 }
 
 function writeData(data) { fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2)); }
-
-function extractTags(content) {
-    const matches = content.match(/#(\w+)/g) || [];
-    return [...new Set(matches.map(t => t.toLowerCase()))];
-}
+function extractTags(content) { const matches = content.match(/#(\w+)/g) || []; return [...new Set(matches.map(t => t.toLowerCase()))]; }
 
 function detectSkillsFromContent(content) {
     const contentLower = content.toLowerCase();
@@ -196,9 +176,7 @@ function detectSkillsFromContent(content) {
             const matches = contentLower.match(regex);
             if (matches) matchCount += matches.length;
         }
-        if (matchCount > 0) {
-            detected[skillId] = { ...skill, matchCount, points: matchCount * skill.weight };
-        }
+        if (matchCount > 0) detected[skillId] = { ...skill, matchCount, points: matchCount * skill.weight };
     }
     return detected;
 }
@@ -208,17 +186,14 @@ function updateSkillProgress(data) {
     for (const post of data.posts) {
         const detected = detectSkillsFromContent(post.content);
         for (const [skillId, skillData] of Object.entries(detected)) {
-            if (!skillProgress[skillId]) {
-                skillProgress[skillId] = { ...SKILL_DEFINITIONS[skillId], totalPoints: 0, mentions: 0, firstLearned: post.date, lastLearned: post.date };
-            }
+            if (!skillProgress[skillId]) skillProgress[skillId] = { ...SKILL_DEFINITIONS[skillId], totalPoints: 0, mentions: 0, firstLearned: post.date, lastLearned: post.date };
             skillProgress[skillId].totalPoints += skillData.points;
             skillProgress[skillId].mentions++;
             skillProgress[skillId].lastLearned = post.date;
         }
     }
     for (const skillId of Object.keys(skillProgress)) {
-        const points = skillProgress[skillId].totalPoints;
-        skillProgress[skillId].percentage = Math.min(100, Math.round(Math.log10(points + 1) * 50));
+        skillProgress[skillId].percentage = Math.min(100, Math.round(Math.log10(skillProgress[skillId].totalPoints + 1) * 50));
     }
     data.skillProgress = skillProgress;
     return skillProgress;
@@ -234,10 +209,7 @@ function getSkillsByCategory(skillProgress) {
     };
     for (const [skillId, skill] of Object.entries(skillProgress)) {
         const cat = skill.category || 'fundamentals';
-        if (categories[cat]) {
-            categories[cat].skills.push({ id: skillId, ...skill });
-            categories[cat].totalProgress += skill.percentage;
-        }
+        if (categories[cat]) { categories[cat].skills.push({ id: skillId, ...skill }); categories[cat].totalProgress += skill.percentage; }
     }
     for (const cat of Object.values(categories)) {
         cat.averageProgress = cat.skills.length > 0 ? Math.round(cat.totalProgress / cat.skills.length) : 0;
@@ -283,18 +255,10 @@ function calculateAchievements(data) {
         if (d.getHours() >= 5 && d.getHours() < 6) hasEarlyPost = true;
         if (d.getDay() === 0 || d.getDay() === 6) hasWeekendPost = true;
     });
-    const stats = {
-        totalPosts: posts.length, longestStreak: streak.longest, uniqueTags: allTags.size,
-        hasNightPost, hasEarlyPost, hasWeekendPost,
-        skillsLearned: Object.keys(skillProgress).length,
-        hasAdvancedSkill: Object.values(skillProgress).some(s => s.percentage >= 50)
-    };
+    const stats = { totalPosts: posts.length, longestStreak: streak.longest, uniqueTags: allTags.size, hasNightPost, hasEarlyPost, hasWeekendPost, skillsLearned: Object.keys(skillProgress).length, hasAdvancedSkill: Object.values(skillProgress).some(s => s.percentage >= 50) };
     const unlocked = [], newlyUnlocked = [];
     for (const [id, ach] of Object.entries(ACHIEVEMENTS)) {
-        if (ach.condition(stats)) {
-            unlocked.push(id);
-            if (!data.unlockedAchievements.includes(id)) newlyUnlocked.push({ ...ach });
-        }
+        if (ach.condition(stats)) { unlocked.push(id); if (!data.unlockedAchievements.includes(id)) newlyUnlocked.push({ ...ach }); }
     }
     data.unlockedAchievements = unlocked;
     return { unlocked: unlocked.map(id => ACHIEVEMENTS[id]), locked: Object.values(ACHIEVEMENTS).filter(a => !unlocked.includes(a.id)), newlyUnlocked, stats };
@@ -320,15 +284,11 @@ function parseBody(req) {
     });
 }
 
-// Rate limiting (simple in-memory)
 const rateLimitMap = new Map();
 function checkRateLimit(ip, limit = 60, windowMs = 60000) {
     const now = Date.now();
     const record = rateLimitMap.get(ip) || { count: 0, resetAt: now + windowMs };
-    if (now > record.resetAt) {
-        record.count = 0;
-        record.resetAt = now + windowMs;
-    }
+    if (now > record.resetAt) { record.count = 0; record.resetAt = now + windowMs; }
     record.count++;
     rateLimitMap.set(ip, record);
     return record.count <= limit;
@@ -342,13 +302,8 @@ const server = http.createServer(async (req, res) => {
     setCorsHeaders(res);
     if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
-    // Rate limiting
     const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    if (!checkRateLimit(clientIp)) {
-        res.writeHead(429, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Too many requests. Try again later.' }));
-        return;
-    }
+    if (!checkRateLimit(clientIp)) { res.writeHead(429, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'Too many requests' })); return; }
 
     const url = new URL(req.url, `http://localhost:${PORT}`);
     const pathname = url.pathname;
@@ -357,15 +312,12 @@ const server = http.createServer(async (req, res) => {
         // ============================================
         // AUTH ENDPOINTS
         // ============================================
-
         if (pathname === '/api/auth/login' && req.method === 'POST') {
             const body = await parseBody(req);
             if (verifyPassword(body.password)) {
-                const token = createSession();
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: true, token, message: 'Welcome back!' }));
+                res.end(JSON.stringify({ success: true, token: createSession(), message: 'Welcome back!' }));
             } else {
-                // Add delay to prevent brute force
                 await new Promise(r => setTimeout(r, 1000));
                 res.writeHead(401, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ success: false, error: 'Invalid password' }));
@@ -382,14 +334,154 @@ const server = http.createServer(async (req, res) => {
         }
 
         if (pathname === '/api/auth/verify' && req.method === 'GET') {
-            const isAuth = isAuthenticated(req);
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ authenticated: isAuth }));
+            res.end(JSON.stringify({ authenticated: isAuthenticated(req) }));
             return;
         }
 
         // ============================================
-        // PUBLIC ENDPOINTS
+        // VISITOR ENGAGEMENT ENDPOINTS (PUBLIC)
+        // ============================================
+
+        // GET /api/visitor - Get visitor count and register new visit
+        if (pathname === '/api/visitor' && req.method === 'GET') {
+            const data = getVisitorData();
+            data.totalVisitors++;
+            data.visitorLog.push({ timestamp: new Date().toISOString(), ip: clientIp.slice(-8) });
+            if (data.visitorLog.length > 100) data.visitorLog = data.visitorLog.slice(-100);
+            saveVisitorData(data);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ visitorNumber: data.totalVisitors, message: `You're visitor #${data.totalVisitors}!` }));
+            return;
+        }
+
+        // GET /api/visitor/count - Just get count without incrementing
+        if (pathname === '/api/visitor/count' && req.method === 'GET') {
+            const data = getVisitorData();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ totalVisitors: data.totalVisitors }));
+            return;
+        }
+
+        // POST /api/reactions - Add reaction (like/love)
+        if (pathname === '/api/reactions' && req.method === 'POST') {
+            const body = await parseBody(req);
+            const { projectId, type } = body;
+            if (!projectId || !['like', 'love'].includes(type)) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Invalid reaction' }));
+                return;
+            }
+            const data = getVisitorData();
+            if (!data.reactions[projectId]) data.reactions[projectId] = { likes: 0, loves: 0 };
+            data.reactions[projectId][type + 's']++;
+            saveVisitorData(data);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, reactions: data.reactions[projectId] }));
+            return;
+        }
+
+        // GET /api/reactions/:projectId - Get reactions for a project
+        if (pathname.match(/^\/api\/reactions\/[\w-]+$/) && req.method === 'GET') {
+            const projectId = pathname.split('/').pop();
+            const data = getVisitorData();
+            const reactions = data.reactions[projectId] || { likes: 0, loves: 0 };
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(reactions));
+            return;
+        }
+
+        // GET /api/reactions - Get all reactions
+        if (pathname === '/api/reactions' && req.method === 'GET') {
+            const data = getVisitorData();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(data.reactions));
+            return;
+        }
+
+        // POST /api/feedback - Submit feedback
+        if (pathname === '/api/feedback' && req.method === 'POST') {
+            const body = await parseBody(req);
+            const { message, rating, emoji } = body;
+            if (!message || message.length < 3 || message.length > 500) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Feedback must be 3-500 characters' }));
+                return;
+            }
+            const data = getVisitorData();
+            const feedback = {
+                id: generateVisitorId(),
+                message: message.trim(),
+                rating: rating || null,
+                emoji: emoji || null,
+                timestamp: new Date().toISOString()
+            };
+            data.feedback.push(feedback);
+            saveVisitorData(data);
+            res.writeHead(201, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, message: 'Thank you for your feedback!' }));
+            return;
+        }
+
+        // GET /api/feedback - Get all feedback (admin only)
+        if (pathname === '/api/feedback' && req.method === 'GET') {
+            const data = getVisitorData();
+            const isAdmin = isAuthenticated(req);
+            const feedback = isAdmin ? data.feedback : data.feedback.map(f => ({ ...f, id: undefined })).slice(-10);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ feedback, total: data.feedback.length }));
+            return;
+        }
+
+        // POST /api/music-request - Request a song
+        if (pathname === '/api/music-request' && req.method === 'POST') {
+            const body = await parseBody(req);
+            const { song, artist, name } = body;
+            if (!song || song.length < 2 || song.length > 100) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Song name must be 2-100 characters' }));
+                return;
+            }
+            const data = getVisitorData();
+            const request = {
+                id: generateVisitorId(),
+                song: song.trim(),
+                artist: (artist || 'Unknown').trim(),
+                requestedBy: (name || 'Anonymous').trim(),
+                timestamp: new Date().toISOString(),
+                votes: 1,
+                status: 'pending'
+            };
+            data.musicRequests.push(request);
+            saveVisitorData(data);
+            res.writeHead(201, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, message: 'Song request added!', request }));
+            return;
+        }
+
+        // GET /api/music-request - Get all song requests
+        if (pathname === '/api/music-request' && req.method === 'GET') {
+            const data = getVisitorData();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ requests: data.musicRequests.slice(-20).reverse(), total: data.musicRequests.length }));
+            return;
+        }
+
+        // POST /api/music-request/:id/vote - Vote for a song
+        if (pathname.match(/^\/api\/music-request\/[\w_]+\/vote$/) && req.method === 'POST') {
+            const id = pathname.split('/')[3];
+            const data = getVisitorData();
+            const request = data.musicRequests.find(r => r.id === id);
+            if (!request) { res.writeHead(404); res.end(JSON.stringify({ error: 'Not found' })); return; }
+            request.votes++;
+            saveVisitorData(data);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, votes: request.votes }));
+            return;
+        }
+
+        // ============================================
+        // JOURNEY ENDPOINTS
         // ============================================
 
         if (pathname === '/api/posts' && req.method === 'GET') {
@@ -398,10 +490,7 @@ const server = http.createServer(async (req, res) => {
             writeData(data);
             let posts = data.posts;
             const search = url.searchParams.get('search');
-            if (search) {
-                const s = search.toLowerCase();
-                posts = posts.filter(p => p.content.toLowerCase().includes(s) || (p.tags || []).some(t => t.includes(s)));
-            }
+            if (search) { const s = search.toLowerCase(); posts = posts.filter(p => p.content.toLowerCase().includes(s) || (p.tags || []).some(t => t.includes(s))); }
             const tag = url.searchParams.get('tag');
             if (tag) posts = posts.filter(p => (p.tags || []).includes(tag.toLowerCase()));
             const streak = calculateStreak(data.posts);
@@ -413,27 +502,13 @@ const server = http.createServer(async (req, res) => {
             res.end(JSON.stringify({ posts, streak, achievements, tagCloud, skills, skillProgress: data.skillProgress, isAuthenticated: isAuthenticated(req) }));
         }
 
-        // ============================================
-        // PROTECTED ENDPOINTS
-        // ============================================
-
         else if (pathname === '/api/posts' && req.method === 'POST') {
-            if (!isAuthenticated(req)) {
-                res.writeHead(401, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'You must be logged in to post!' }));
-                return;
-            }
+            if (!isAuthenticated(req)) { res.writeHead(401, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'You must be logged in to post!' })); return; }
             const body = await parseBody(req);
             const data = readData();
             const tags = extractTags(body.content);
             const detectedSkills = detectSkillsFromContent(body.content);
-            const newPost = {
-                id: Date.now().toString(),
-                content: body.content,
-                date: new Date().toISOString(),
-                tags,
-                detectedSkills: Object.keys(detectedSkills)
-            };
+            const newPost = { id: Date.now().toString(), content: body.content, date: new Date().toISOString(), tags, detectedSkills: Object.keys(detectedSkills) };
             data.posts.push(newPost);
             updateSkillProgress(data);
             const streak = calculateStreak(data.posts);
@@ -445,11 +520,7 @@ const server = http.createServer(async (req, res) => {
         }
 
         else if (pathname.match(/^\/api\/posts\/\w+$/) && req.method === 'PUT') {
-            if (!isAuthenticated(req)) {
-                res.writeHead(401, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Unauthorized' }));
-                return;
-            }
+            if (!isAuthenticated(req)) { res.writeHead(401, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
             const id = pathname.split('/').pop();
             const body = await parseBody(req);
             const data = readData();
@@ -466,37 +537,30 @@ const server = http.createServer(async (req, res) => {
         }
 
         else if (pathname.match(/^\/api\/posts\/\w+$/) && req.method === 'DELETE') {
-            if (!isAuthenticated(req)) {
-                res.writeHead(401, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Unauthorized' }));
-                return;
-            }
+            if (!isAuthenticated(req)) { res.writeHead(401, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: 'Unauthorized' })); return; }
             const id = pathname.split('/').pop();
             const data = readData();
             const postIndex = data.posts.findIndex(p => p.id === id);
             if (postIndex === -1) { res.writeHead(404); res.end(JSON.stringify({ error: 'Not found' })); return; }
             data.posts.splice(postIndex, 1);
             updateSkillProgress(data);
-            const streak = calculateStreak(data.posts);
             writeData(data);
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: true, streak }));
+            res.end(JSON.stringify({ success: true, streak: calculateStreak(data.posts) }));
         }
 
         else if (pathname === '/api/skills' && req.method === 'GET') {
             const data = readData();
             updateSkillProgress(data);
             writeData(data);
-            const skills = getSkillsByCategory(data.skillProgress);
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ skills, skillProgress: data.skillProgress }));
+            res.end(JSON.stringify({ skills: getSkillsByCategory(data.skillProgress), skillProgress: data.skillProgress }));
         }
 
         else if (pathname === '/api/streak' && req.method === 'GET') {
             const data = readData();
-            const streak = calculateStreak(data.posts);
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(streak));
+            res.end(JSON.stringify(calculateStreak(data.posts)));
         }
 
         else if (pathname === '/api/achievements' && req.method === 'GET') {
@@ -508,21 +572,19 @@ const server = http.createServer(async (req, res) => {
         }
 
         else if (pathname === '/api/tags' && req.method === 'GET') {
-            const data = readData();
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(getTagCloud(data.posts)));
+            res.end(JSON.stringify(getTagCloud(readData().posts)));
         }
 
         else if (pathname === '/api/calendar' && req.method === 'GET') {
             const data = readData();
-            const streak = calculateStreak(data.posts);
             const calendar = [];
             for (let i = 89; i >= 0; i--) {
                 const date = new Date(Date.now() - i * 86400000).toISOString().split('T')[0];
                 calendar.push({ date, count: data.posts.filter(p => p.date.split('T')[0] === date).length });
             }
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ calendar, streak }));
+            res.end(JSON.stringify({ calendar, streak: calculateStreak(data.posts) }));
         }
 
         else {
@@ -538,17 +600,11 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
     console.log(`\n🚀 Journey API Server running at http://localhost:${PORT}`);
-    console.log(`📝 Data stored in: ${DATA_FILE}`);
-    console.log('\n🔐 SECURITY ENABLED:');
-    console.log('   ✓ Password loaded from .env file (not in code!)');
-    console.log('   ✓ Password hashed with HMAC-SHA256');
-    console.log('   ✓ Timing-safe password comparison');
-    console.log('   ✓ Rate limiting (60 req/min)');
-    console.log('   ✓ Session expiry (24 hours)');
-    console.log('\n📡 API Endpoints:');
-    console.log('  POST   /api/auth/login     - Login');
-    console.log('  GET    /api/posts          - Get all posts');
-    console.log('  POST   /api/posts          - Create (auth required)');
-    console.log('\n🎯 Skills:', Object.keys(SKILL_DEFINITIONS).length, 'tracked');
-    console.log('🏆 Achievements:', Object.keys(ACHIEVEMENTS).length, 'available\n');
+    console.log('\n📡 Visitor Engagement APIs:');
+    console.log('  GET    /api/visitor         - Register visit & get count');
+    console.log('  POST   /api/reactions       - Add like/love reaction');
+    console.log('  POST   /api/feedback        - Submit feedback');
+    console.log('  POST   /api/music-request   - Request a song');
+    console.log('  GET    /api/music-request   - Get song requests');
+    console.log('\n🔐 Auth | 🎯 Skills:', Object.keys(SKILL_DEFINITIONS).length, '| 🏆 Achievements:', Object.keys(ACHIEVEMENTS).length, '\n');
 });

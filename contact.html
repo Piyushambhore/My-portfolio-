@@ -731,6 +731,287 @@
             }
         });
     </script>
+
+    <!-- NEW FEATURE POPUP -->
+    <style>
+        .feature-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .feature-popup-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .feature-popup {
+            background: linear-gradient(145deg, #121214, #0a0a0b);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 420px;
+            text-align: center;
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), 0 0 100px rgba(41, 151, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-popup-overlay.show .feature-popup {
+            transform: scale(1) translateY(0);
+        }
+
+        .feature-popup::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(41, 151, 255, 0.1), transparent 30%);
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .popup-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .popup-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #2997ff, #0071e3);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(41, 151, 255, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 10px rgba(41, 151, 255, 0);
+            }
+        }
+
+        .popup-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            display: block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .popup-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .popup-desc {
+            color: #8b8b93;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .popup-features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .popup-feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .popup-feature-item i {
+            font-size: 1.5rem;
+            color: #2997ff;
+        }
+
+        .popup-feature-item span {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .popup-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #2997ff, #0071e3);
+            color: white;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .popup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(41, 151, 255, 0.4);
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            color: #888;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .popup-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .popup-skip {
+            display: block;
+            margin-top: 16px;
+            color: #555;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .popup-skip:hover {
+            color: #888;
+        }
+    </style>
+
+    <div class="feature-popup-overlay" id="featurePopup">
+        <div class="feature-popup">
+            <button class="popup-close" onclick="closeFeaturePopup()">
+                <i class="ph-bold ph-x"></i>
+            </button>
+            <div class="popup-content">
+                <span class="popup-badge">✨ New Feature</span>
+                <span class="popup-icon">📝</span>
+                <h2 class="popup-title">My Learning Journey</h2>
+                <p class="popup-desc">
+                    Follow my coding journey in real-time! Track my progress, see what I'm learning, and explore my
+                    achievements.
+                </p>
+                <div class="popup-features">
+                    <div class="popup-feature-item">
+                        <i class="ph-fill ph-fire"></i>
+                        <span>Streaks</span>
+                    </div>
+                    <div class="popup-feature-item">
+                        <i class="ph-fill ph-trophy"></i>
+                        <span>Achievements</span>
+                    </div>
+                    <div class="popup-feature-item">
+                        <i class="ph-fill ph-chart-line-up"></i>
+                        <span>Skills</span>
+                    </div>
+                </div>
+                <a href="journey.html" class="popup-btn">
+                    Explore Journey <i class="ph-bold ph-arrow-right"></i>
+                </a>
+                <span class="popup-skip" onclick="closeFeaturePopup()">Maybe later</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show popup only once per session AND only for next 20 days
+        const POPUP_KEY = 'journey_popup_seen';
+        const POPUP_EXPIRY = new Date('2026-02-27'); // 20 days from Feb 7, 2026
+
+        function showFeaturePopup() {
+            const now = new Date();
+            // Stop showing after expiry date
+            if (now > POPUP_EXPIRY) return;
+
+            if (!sessionStorage.getItem(POPUP_KEY)) {
+                setTimeout(() => {
+                    document.getElementById('featurePopup').classList.add('show');
+                }, 1500);
+            }
+        }
+
+        function closeFeaturePopup() {
+            document.getElementById('featurePopup').classList.remove('show');
+            sessionStorage.setItem(POPUP_KEY, 'true');
+        }
+
+        // Close on overlay click
+        document.getElementById('featurePopup').addEventListener('click', (e) => {
+            if (e.target.id === 'featurePopup') closeFeaturePopup();
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeFeaturePopup();
+        });
+
+        // Show popup on load
+        showFeaturePopup();
+    </script>
 </body>
 
 </html>

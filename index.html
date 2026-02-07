@@ -4,19 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piyush| Creative Developer</title>
+    <title>Piyush | Creative Developer</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500&family=Syne:wght@400;700;800&display=swap"
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
 
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* --- VISITOR COUNTER (below brand) --- */
+        .visitor-counter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 100px;
+            padding: 6px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.85rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .visitor-counter .icon {
+            font-size: 1rem;
+            color: #2ecc71;
+        }
+
+        .visitor-counter .count {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2ecc71, #2997ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .visitor-counter .label {
+            color: #888;
+            font-size: 0.75rem;
+        }
+
+        .nav-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -36,7 +87,15 @@
     <main class="container">
 
         <nav class="nav">
-            <div class="brand">@CodeByPiyush</div>
+            <div class="nav-left">
+                <div class="brand">@CodeByPiyush</div>
+                <!-- Visitor Counter below brand -->
+                <div class="visitor-counter" id="visitor-counter">
+                    <i class="ph-fill ph-users icon"></i>
+                    <span class="count" id="visitor-count">---</span>
+                    <span class="label">visitors</span>
+                </div>
+            </div>
             <div class="status-dot">Available for work</div>
         </nav>
 
@@ -99,14 +158,51 @@
 
     </main>
 
-    <!-- Journey Link (Hidden on mobile, accessible via Contact page) -->
-    <a href="journey.html"
-        style="position: fixed; top: 20px; right: 20px; z-index: 100; padding: 10px 20px; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-radius: 100px; color: white; text-decoration: none; font-size: 0.9rem; font-family: 'Manrope', sans-serif; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; display: flex; align-items: center; gap: 8px;"
-        onmouseover="this.style.background='rgba(41,151,255,0.3)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'">
-        📝 My Journey
-    </a>
-
     <script src="script.js"></script>
+    <script>
+        const API_BASE = ''; // Vercel serverless - same domain
+        const VISITED_KEY = 'piyush_visited';
+
+        // --- VISITOR COUNTER ---
+        async function initVisitorCounter() {
+            const counter = document.getElementById('visitor-count');
+            const visited = localStorage.getItem(VISITED_KEY);
+
+            try {
+                let data;
+                if (!visited) {
+                    const res = await fetch(`${API_BASE}/visitor`);
+                    data = await res.json();
+                    localStorage.setItem(VISITED_KEY, Date.now());
+                } else {
+                    const res = await fetch(`${API_BASE}/visitor/count`);
+                    data = await res.json();
+                }
+
+                const target = data.visitorNumber || data.totalVisitors || 0;
+                animateNumber(counter, target);
+            } catch (e) {
+                counter.textContent = '∞';
+            }
+        }
+
+        function animateNumber(el, target) {
+            let current = 0;
+            const increment = Math.ceil(target / 30);
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                el.textContent = current.toLocaleString();
+            }, 30);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initVisitorCounter, 1000);
+        });
+    </script>
 </body>
 
 </html>
