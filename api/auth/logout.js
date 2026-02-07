@@ -1,5 +1,5 @@
-const { setCorsHeaders, handleOptions } = require('../lib/supabase');
-const { getAuthToken, destroySession } = require('../lib/auth');
+const { setCorsHeaders, handleOptions } = require('../../lib/supabase');
+const { getAuthToken, destroySession } = require('../../lib/auth');
 
 module.exports = async function handler(req, res) {
     setCorsHeaders(res);

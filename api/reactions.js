@@ -1,4 +1,4 @@
-const { supabase, setCorsHeaders, handleOptions } = require('./lib/supabase');
+const { supabase, setCorsHeaders, handleOptions } = require('../lib/supabase');
 
 module.exports = async function handler(req, res) {
     setCorsHeaders(res);

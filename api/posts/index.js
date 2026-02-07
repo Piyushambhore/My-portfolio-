@@ -1,5 +1,5 @@
-const { supabase, setCorsHeaders, handleOptions } = require('../lib/supabase');
-const { isAuthenticated } = require('../lib/auth');
+const { supabase, setCorsHeaders, handleOptions } = require('../../lib/supabase');
+const { isAuthenticated } = require('../../lib/auth');
 const {
     extractTags,
     detectSkillsFromContent,
@@ -8,7 +8,7 @@ const {
     calculateStreak,
     calculateAchievements,
     getTagCloud
-} = require('../lib/skills');
+} = require('../../lib/skills');
 
 module.exports = async function handler(req, res) {
     setCorsHeaders(res);

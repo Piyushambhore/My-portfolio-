@@ -1,5 +1,5 @@
-const { supabase, setCorsHeaders, handleOptions } = require('./lib/supabase');
-const { updateSkillProgress, calculateAchievements } = require('./lib/skills');
+const { supabase, setCorsHeaders, handleOptions } = require('../lib/supabase');
+const { updateSkillProgress, calculateAchievements } = require('../lib/skills');
 
 module.exports = async function handler(req, res) {
     setCorsHeaders(res);
