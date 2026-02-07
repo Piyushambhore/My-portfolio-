@@ -1,12 +1,12 @@
-import { supabase, setCorsHeaders, handleOptions } from './lib/supabase.js';
-import { isAuthenticated } from './lib/auth.js';
+const { supabase, setCorsHeaders, handleOptions } = require('./lib/supabase');
+const { isAuthenticated } = require('./lib/auth');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     setCorsHeaders(res);
     if (handleOptions(req, res)) return;
 
     try {
-        // GET /api/feedback - Get feedback
+        // GET /api/feedback - Get all feedback (admin only)
         if (req.method === 'GET') {
             const { data, error } = await supabase
                 .from('feedback')
@@ -15,10 +15,8 @@ export default async function handler(req, res) {
 
             if (error) throw error;
 
-            const isAdmin = isAuthenticated(req);
-            const feedback = isAdmin
-                ? data
-                : (data || []).slice(0, 10).map(f => ({ ...f, id: undefined }));
+            // Only show recent feedback unless admin
+            const feedback = isAuthenticated(req) ? data : (data || []).slice(0, 5);
 
             return res.status(200).json({
                 feedback,
@@ -30,13 +28,13 @@ export default async function handler(req, res) {
         if (req.method === 'POST') {
             const { message, rating, emoji } = req.body;
 
-            if (!message || message.length < 3 || message.length > 500) {
-                return res.status(400).json({ error: 'Feedback must be 3-500 characters' });
+            if (!message || message.length > 500) {
+                return res.status(400).json({ error: 'Message required (max 500 chars)' });
             }
 
             const feedback = {
-                id: 'f_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
-                message: message.trim(),
+                id: Date.now().toString(),
+                message,
                 rating: rating || null,
                 emoji: emoji || null,
                 timestamp: new Date().toISOString()
@@ -56,4 +54,4 @@ export default async function handler(req, res) {
         console.error('Feedback error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

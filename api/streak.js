@@ -1,7 +1,7 @@
-import { supabase, setCorsHeaders, handleOptions } from './lib/supabase.js';
-import { calculateStreak } from './lib/skills.js';
+const { supabase, setCorsHeaders, handleOptions } = require('./lib/supabase');
+const { calculateStreak } = require('./lib/skills');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     setCorsHeaders(res);
     if (handleOptions(req, res)) return;
 
@@ -10,11 +10,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { data: posts, error } = await supabase
-            .from('posts')
-            .select('*')
-            .order('date', { ascending: false });
-
+        const { data: posts, error } = await supabase.from('posts').select('*');
         if (error) throw error;
 
         const streak = calculateStreak(posts || []);
@@ -23,4 +19,4 @@ export default async function handler(req, res) {
         console.error('Streak error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

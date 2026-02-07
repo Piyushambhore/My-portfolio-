@@ -1,8 +1,8 @@
-import { supabase, setCorsHeaders, handleOptions } from '../lib/supabase.js';
-import { isAuthenticated } from '../lib/auth.js';
-import { extractTags, detectSkillsFromContent, calculateStreak, updateSkillProgress } from '../lib/skills.js';
+const { supabase, setCorsHeaders, handleOptions } = require('../lib/supabase');
+const { isAuthenticated } = require('../lib/auth');
+const { extractTags, detectSkillsFromContent, calculateStreak } = require('../lib/skills');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     setCorsHeaders(res);
     if (handleOptions(req, res)) return;
 
@@ -64,4 +64,4 @@ export default async function handler(req, res) {
         console.error('Post error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

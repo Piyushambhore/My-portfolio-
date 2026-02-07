@@ -1,7 +1,7 @@
-import { setCorsHeaders, handleOptions } from '../lib/supabase.js';
-import { verifyPassword, createSession } from '../lib/auth.js';
+const { setCorsHeaders, handleOptions } = require('../lib/supabase');
+const { verifyPassword, createSession } = require('../lib/auth');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     setCorsHeaders(res);
     if (handleOptions(req, res)) return;
 
@@ -31,4 +31,4 @@ export default async function handler(req, res) {
         console.error('Login error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

@@ -1,6 +1,6 @@
-import { supabase, setCorsHeaders, handleOptions } from './lib/supabase.js';
+const { supabase, setCorsHeaders, handleOptions } = require('./lib/supabase');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     setCorsHeaders(res);
     if (handleOptions(req, res)) return;
 
@@ -10,7 +10,6 @@ export default async function handler(req, res) {
             const { data, error } = await supabase.from('reactions').select('*');
             if (error) throw error;
 
-            // Convert to object format
             const reactions = {};
             (data || []).forEach(r => {
                 reactions[r.project_id] = { likes: r.likes, loves: r.loves };
@@ -24,36 +23,49 @@ export default async function handler(req, res) {
             const { projectId, type } = req.body;
 
             if (!projectId || !['like', 'love'].includes(type)) {
-                return res.status(400).json({ error: 'Invalid reaction' });
+                return res.status(400).json({ error: 'Invalid projectId or type' });
             }
 
-            // Get existing or create new
-            let { data: existing } = await supabase
+            // Get existing record or create new
+            let { data, error } = await supabase
                 .from('reactions')
                 .select('*')
                 .eq('project_id', projectId)
                 .single();
 
-            if (!existing) {
-                const { error: insertError } = await supabase
+            if (error && error.code === 'PGRST116') {
+                // Create new record
+                const newReaction = {
+                    project_id: projectId,
+                    likes: type === 'like' ? 1 : 0,
+                    loves: type === 'love' ? 1 : 0
+                };
+                const { data: inserted, error: insertError } = await supabase
                     .from('reactions')
-                    .insert([{ project_id: projectId, likes: 0, loves: 0 }]);
+                    .insert([newReaction])
+                    .select()
+                    .single();
+
                 if (insertError) throw insertError;
-                existing = { likes: 0, loves: 0 };
+                data = inserted;
+            } else if (error) {
+                throw error;
+            } else {
+                // Update existing
+                const updates = type === 'like'
+                    ? { likes: data.likes + 1 }
+                    : { loves: data.loves + 1 };
+
+                const { data: updated, error: updateError } = await supabase
+                    .from('reactions')
+                    .update(updates)
+                    .eq('project_id', projectId)
+                    .select()
+                    .single();
+
+                if (updateError) throw updateError;
+                data = updated;
             }
-
-            // Update count
-            const updateField = type === 'like' ? 'likes' : 'loves';
-            const newCount = (existing[updateField] || 0) + 1;
-
-            const { data, error } = await supabase
-                .from('reactions')
-                .update({ [updateField]: newCount })
-                .eq('project_id', projectId)
-                .select()
-                .single();
-
-            if (error) throw error;
 
             return res.status(200).json({
                 success: true,
@@ -66,4 +78,4 @@ export default async function handler(req, res) {
         console.error('Reactions error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

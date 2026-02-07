@@ -1,7 +1,7 @@
-import { setCorsHeaders, handleOptions } from '../lib/supabase.js';
-import { getAuthToken, destroySession } from '../lib/auth.js';
+const { setCorsHeaders, handleOptions } = require('../lib/supabase');
+const { getAuthToken, destroySession } = require('../lib/auth');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     setCorsHeaders(res);
     if (handleOptions(req, res)) return;
 
@@ -17,4 +17,4 @@ export default async function handler(req, res) {
         console.error('Logout error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

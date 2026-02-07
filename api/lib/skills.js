@@ -1,5 +1,5 @@
 // Skill definitions for auto-detection
-export const SKILL_DEFINITIONS = {
+const SKILL_DEFINITIONS = {
     html: { name: 'HTML5', category: 'frontend', icon: 'code', keywords: ['html', 'html5', 'markup', 'semantic', 'tags', 'elements', 'dom', 'document'], weight: 1 },
     css: { name: 'CSS3', category: 'frontend', icon: 'paint-brush', keywords: ['css', 'css3', 'styles', 'styling', 'flexbox', 'grid', 'animations', 'transitions', 'responsive', 'media queries', 'selectors'], weight: 1 },
     javascript: { name: 'JavaScript', category: 'frontend', icon: 'brackets-curly', keywords: ['javascript', 'js', 'es6', 'es2015', 'async', 'await', 'promises', 'functions', 'arrays', 'objects', 'dom manipulation', 'events', 'callbacks', 'closures'], weight: 1.5 },
@@ -20,7 +20,7 @@ export const SKILL_DEFINITIONS = {
     dsa: { name: 'DSA', category: 'fundamentals', icon: 'tree-structure', keywords: ['dsa', 'data structures', 'algorithms', 'arrays', 'linked list', 'trees', 'graphs', 'sorting', 'leetcode'], weight: 2 }
 };
 
-export const ACHIEVEMENTS = {
+const ACHIEVEMENTS = {
     first_post: { id: 'first_post', name: 'First Step', icon: '🌱', description: 'Posted your first learning', condition: (s) => s.totalPosts >= 1 },
     streak_3: { id: 'streak_3', name: 'Getting Started', icon: '🔥', description: '3 day streak', condition: (s) => s.longestStreak >= 3 },
     streak_7: { id: 'streak_7', name: 'Week Warrior', icon: '⚡', description: '7 day streak', condition: (s) => s.longestStreak >= 7 },
@@ -40,12 +40,12 @@ export const ACHIEVEMENTS = {
     skill_master: { id: 'skill_master', name: 'Skill Master', icon: '🎓', description: '50% in any skill', condition: (s) => s.hasAdvancedSkill },
 };
 
-export function extractTags(content) {
+function extractTags(content) {
     const matches = content.match(/#(\w+)/g) || [];
     return [...new Set(matches.map(t => t.toLowerCase()))];
 }
 
-export function detectSkillsFromContent(content) {
+function detectSkillsFromContent(content) {
     const contentLower = content.toLowerCase();
     const detected = {};
     for (const [skillId, skill] of Object.entries(SKILL_DEFINITIONS)) {
@@ -60,7 +60,7 @@ export function detectSkillsFromContent(content) {
     return detected;
 }
 
-export function updateSkillProgress(posts) {
+function updateSkillProgress(posts) {
     const skillProgress = {};
     for (const post of posts) {
         const detected = detectSkillsFromContent(post.content);
@@ -79,7 +79,7 @@ export function updateSkillProgress(posts) {
     return skillProgress;
 }
 
-export function getSkillsByCategory(skillProgress) {
+function getSkillsByCategory(skillProgress) {
     const categories = {
         frontend: { name: 'Frontend', icon: 'code', skills: [], totalProgress: 0 },
         backend: { name: 'Backend', icon: 'database', skills: [], totalProgress: 0 },
@@ -101,7 +101,7 @@ export function getSkillsByCategory(skillProgress) {
     return categories;
 }
 
-export function calculateStreak(posts) {
+function calculateStreak(posts) {
     if (!posts.length) return { current: 0, longest: 0, lastPostDate: null, activeDays: [] };
     const activeDays = [...new Set(posts.map(p => new Date(p.date).toISOString().split('T')[0]))].sort().reverse();
     const today = new Date().toISOString().split('T')[0];
@@ -125,7 +125,7 @@ export function calculateStreak(posts) {
     return { current: currentStreak, longest: longestStreak, lastPostDate: activeDays[0] || null, activeDays: activeDays.slice(0, 365) };
 }
 
-export function calculateAchievements(posts, skillProgress, unlockedAchievements = []) {
+function calculateAchievements(posts, skillProgress, unlockedAchievements = []) {
     const streak = calculateStreak(posts);
     const allTags = new Set();
     posts.forEach(p => (p.tags || []).forEach(t => allTags.add(t)));
@@ -159,8 +159,20 @@ export function calculateAchievements(posts, skillProgress, unlockedAchievements
     };
 }
 
-export function getTagCloud(posts) {
+function getTagCloud(posts) {
     const counts = {};
     posts.forEach(p => (p.tags || []).forEach(t => counts[t] = (counts[t] || 0) + 1));
     return Object.entries(counts).map(([tag, count]) => ({ tag, count })).sort((a, b) => b.count - a.count);
 }
+
+module.exports = {
+    SKILL_DEFINITIONS,
+    ACHIEVEMENTS,
+    extractTags,
+    detectSkillsFromContent,
+    updateSkillProgress,
+    getSkillsByCategory,
+    calculateStreak,
+    calculateAchievements,
+    getTagCloud
+};

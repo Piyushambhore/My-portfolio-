@@ -1,7 +1,7 @@
-import { supabase, setCorsHeaders, handleOptions } from './lib/supabase.js';
-import { getTagCloud } from './lib/skills.js';
+const { supabase, setCorsHeaders, handleOptions } = require('./lib/supabase');
+const { getTagCloud } = require('./lib/skills');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     setCorsHeaders(res);
     if (handleOptions(req, res)) return;
 
@@ -10,15 +10,13 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { data: posts, error } = await supabase
-            .from('posts')
-            .select('*');
-
+        const { data: posts, error } = await supabase.from('posts').select('*');
         if (error) throw error;
 
-        return res.status(200).json(getTagCloud(posts || []));
+        const tagCloud = getTagCloud(posts || []);
+        return res.status(200).json(tagCloud);
     } catch (error) {
         console.error('Tags error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

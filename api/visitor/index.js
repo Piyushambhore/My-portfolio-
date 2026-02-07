@@ -1,6 +1,6 @@
-import { supabase, setCorsHeaders, handleOptions } from '../lib/supabase.js';
+const { supabase, setCorsHeaders, handleOptions } = require('../lib/supabase');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     setCorsHeaders(res);
     if (handleOptions(req, res)) return;
 
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Get or create visitor counter
+        // Get current count
         let { data, error } = await supabase
             .from('visitors')
             .select('*')
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
             .single();
 
         if (error && error.code === 'PGRST116') {
-            // No record exists, create one
+            // Record doesn't exist, create it
             const { data: newData, error: insertError } = await supabase
                 .from('visitors')
                 .insert([{ id: 1, total_count: 1 }])
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         } else if (error) {
             throw error;
         } else {
-            // Increment visitor count
+            // Increment count
             const { data: updatedData, error: updateError } = await supabase
                 .from('visitors')
                 .update({ total_count: data.total_count + 1 })
@@ -41,12 +41,9 @@ export default async function handler(req, res) {
             data = updatedData;
         }
 
-        return res.status(200).json({
-            visitorNumber: data.total_count,
-            message: `You're visitor #${data.total_count}!`
-        });
+        return res.status(200).json({ visitorNumber: data.total_count });
     } catch (error) {
         console.error('Visitor error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

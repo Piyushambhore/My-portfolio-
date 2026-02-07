@@ -1,7 +1,6 @@
-import { supabase, setCorsHeaders, handleOptions } from './lib/supabase.js';
-import { calculateStreak } from './lib/skills.js';
+const { supabase, setCorsHeaders, handleOptions } = require('./lib/supabase');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     setCorsHeaders(res);
     if (handleOptions(req, res)) return;
 
@@ -10,25 +9,30 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { data: posts, error } = await supabase
-            .from('posts')
-            .select('*')
-            .order('date', { ascending: false });
-
+        const { data: posts, error } = await supabase.from('posts').select('*');
         if (error) throw error;
 
-        // Generate calendar data for last 90 days
-        const calendar = [];
-        for (let i = 89; i >= 0; i--) {
-            const date = new Date(Date.now() - i * 86400000).toISOString().split('T')[0];
-            const count = (posts || []).filter(p => p.date.split('T')[0] === date).length;
-            calendar.push({ date, count });
-        }
+        // Build activity map for calendar heatmap
+        const activityMap = {};
+        (posts || []).forEach(post => {
+            const date = new Date(post.date).toISOString().split('T')[0];
+            if (!activityMap[date]) {
+                activityMap[date] = { count: 0, skills: new Set() };
+            }
+            activityMap[date].count++;
+            (post.detected_skills || []).forEach(s => activityMap[date].skills.add(s));
+        });
 
-        const streak = calculateStreak(posts || []);
-        return res.status(200).json({ calendar, streak });
+        // Convert to array format
+        const calendar = Object.entries(activityMap).map(([date, data]) => ({
+            date,
+            count: data.count,
+            skills: [...data.skills]
+        }));
+
+        return res.status(200).json(calendar);
     } catch (error) {
         console.error('Calendar error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

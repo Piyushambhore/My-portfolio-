@@ -1,7 +1,7 @@
-import { supabase, setCorsHeaders, handleOptions } from './lib/supabase.js';
-import { updateSkillProgress, getSkillsByCategory } from './lib/skills.js';
+const { supabase, setCorsHeaders, handleOptions } = require('./lib/supabase');
+const { updateSkillProgress, getSkillsByCategory } = require('./lib/skills');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     setCorsHeaders(res);
     if (handleOptions(req, res)) return;
 
@@ -10,22 +10,15 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { data: posts, error } = await supabase
-            .from('posts')
-            .select('*')
-            .order('date', { ascending: false });
-
+        const { data: posts, error } = await supabase.from('posts').select('*');
         if (error) throw error;
 
         const skillProgress = updateSkillProgress(posts || []);
         const skills = getSkillsByCategory(skillProgress);
 
-        return res.status(200).json({
-            skills,
-            skillProgress
-        });
+        return res.status(200).json({ skills, skillProgress });
     } catch (error) {
         console.error('Skills error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};

@@ -1,22 +1,21 @@
-import crypto from 'crypto';
+const crypto = require('crypto');
 
 const SESSION_SECRET = process.env.SESSION_SECRET || 'default-secret-change-me';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'changeme123';
 
-// Simple in-memory session store (resets on cold start, but tokens are validated)
-// For production, use a database or Redis
+// Simple in-memory session store (resets on cold start, but works for basic auth)
 const activeSessions = new Map();
 const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
-export function hashPassword(password) {
+function hashPassword(password) {
     return crypto.createHmac('sha256', SESSION_SECRET).update(password).digest('hex');
 }
 
-export function generateSessionToken() {
+function generateSessionToken() {
     return crypto.randomBytes(48).toString('hex');
 }
 
-export function verifyPassword(password) {
+function verifyPassword(password) {
     const hashedInput = hashPassword(password);
     const hashedStored = hashPassword(ADMIN_PASSWORD);
     try {
@@ -26,7 +25,7 @@ export function verifyPassword(password) {
     }
 }
 
-export function createSession() {
+function createSession() {
     const token = generateSessionToken();
     activeSessions.set(token, {
         createdAt: Date.now(),
@@ -35,7 +34,7 @@ export function createSession() {
     return token;
 }
 
-export function verifySession(token) {
+function verifySession(token) {
     if (!token) return false;
     const session = activeSessions.get(token);
     if (!session) return false;
@@ -46,15 +45,26 @@ export function verifySession(token) {
     return true;
 }
 
-export function getAuthToken(req) {
+function getAuthToken(req) {
     const authHeader = req.headers['authorization'];
     return authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
 }
 
-export function isAuthenticated(req) {
+function isAuthenticated(req) {
     return verifySession(getAuthToken(req));
 }
 
-export function destroySession(token) {
+function destroySession(token) {
     if (token) activeSessions.delete(token);
 }
+
+module.exports = {
+    hashPassword,
+    generateSessionToken,
+    verifyPassword,
+    createSession,
+    verifySession,
+    getAuthToken,
+    isAuthenticated,
+    destroySession
+};
