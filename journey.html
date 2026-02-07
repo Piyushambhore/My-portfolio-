@@ -1565,6 +1565,66 @@
         function setToken(token) { localStorage.setItem(TOKEN_KEY, token); }
         function clearToken() { localStorage.removeItem(TOKEN_KEY); }
 
+        // --- RATE LIMITING (Frontend) ---
+        const RATE_LIMIT_KEY = 'login_attempts';
+        const MAX_ATTEMPTS = 5;
+        const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+
+        function getLoginAttempts() {
+            const data = localStorage.getItem(RATE_LIMIT_KEY);
+            if (!data) return { attempts: [], lockedUntil: null };
+            try {
+                return JSON.parse(data);
+            } catch (e) {
+                return { attempts: [], lockedUntil: null };
+            }
+        }
+
+        function recordLoginAttempt(success) {
+            const data = getLoginAttempts();
+            const now = Date.now();
+
+            // Clear old attempts (older than 15 min)
+            data.attempts = data.attempts.filter(t => now - t < LOCKOUT_DURATION);
+
+            if (success) {
+                // Clear all on success
+                localStorage.removeItem(RATE_LIMIT_KEY);
+                return;
+            }
+
+            data.attempts.push(now);
+
+            // Lock if too many attempts
+            if (data.attempts.length >= MAX_ATTEMPTS) {
+                data.lockedUntil = now + LOCKOUT_DURATION;
+            }
+
+            localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(data));
+        }
+
+        function checkRateLimit() {
+            const data = getLoginAttempts();
+            const now = Date.now();
+
+            // Check if locked
+            if (data.lockedUntil && now < data.lockedUntil) {
+                const remaining = Math.ceil((data.lockedUntil - now) / 60000);
+                return { allowed: false, message: `Too many attempts. Try again in ${remaining} min.` };
+            }
+
+            // Clear lock if expired
+            if (data.lockedUntil && now >= data.lockedUntil) {
+                localStorage.removeItem(RATE_LIMIT_KEY);
+            }
+
+            // Count recent attempts
+            const recentAttempts = data.attempts.filter(t => now - t < LOCKOUT_DURATION);
+            const remaining = MAX_ATTEMPTS - recentAttempts.length;
+
+            return { allowed: true, remaining };
+        }
+
         async function showLoginModal() {
             document.getElementById('login-modal').classList.add('show');
             document.getElementById('password-input').focus();
@@ -1593,9 +1653,18 @@
         }
 
         async function doLogin() {
+            const errorEl = document.getElementById('login-error');
+
+            // Check rate limit first
+            const rateCheck = checkRateLimit();
+            if (!rateCheck.allowed) {
+                errorEl.textContent = rateCheck.message;
+                errorEl.classList.add('show');
+                return;
+            }
+
             const password = document.getElementById('password-input').value;
             const captchaAnswer = document.getElementById('captcha-answer').value;
-            const errorEl = document.getElementById('login-error');
 
             if (!captchaAnswer) {
                 errorEl.textContent = 'Please answer the security question.';
@@ -1616,17 +1685,18 @@
                 const data = await res.json();
 
                 if (data.success) {
+                    recordLoginAttempt(true); // Clear attempts on success
                     setToken(data.token);
                     isAuthenticated = true;
                     hideLoginModal();
                     updateAuthUI();
                     await loadData();
                 } else {
-                    errorEl.textContent = data.error || 'Invalid credentials.';
+                    recordLoginAttempt(false); // Record failed attempt
+                    const remaining = checkRateLimit().remaining;
+                    errorEl.textContent = `${data.error || 'Invalid credentials.'} (${remaining} attempts left)`;
                     errorEl.classList.add('show');
-                    if (data.requireCaptcha || data.error?.includes('CAPTCHA')) {
-                        await refreshCaptcha();
-                    }
+                    await refreshCaptcha(); // Always refresh on fail
                 }
             } catch (e) {
                 errorEl.textContent = 'Server offline. Try again later.';

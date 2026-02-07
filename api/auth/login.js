@@ -1,7 +1,6 @@
 const { setCorsHeaders, handleOptions } = require('../../lib/supabase');
 const { verifyPassword, createSession } = require('../../lib/auth');
 const { verifyCaptcha } = require('../../lib/captcha');
-const { checkRateLimit } = require('../../lib/rateLimit');
 
 module.exports = async function handler(req, res) {
     setCorsHeaders(res);
@@ -12,15 +11,6 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        // Check rate limit first
-        const rateCheck = await checkRateLimit(req, 'login');
-        if (!rateCheck.allowed) {
-            return res.status(429).json({
-                error: rateCheck.error,
-                retryAfter: rateCheck.retryAfter
-            });
-        }
-
         const { password, captchaToken, captchaAnswer } = req.body;
 
         // Verify CAPTCHA first
@@ -40,10 +30,7 @@ module.exports = async function handler(req, res) {
         }
 
         if (!verifyPassword(password)) {
-            return res.status(401).json({
-                error: 'Invalid password',
-                remaining: rateCheck.remaining
-            });
+            return res.status(401).json({ error: 'Invalid password' });
         }
 
         // Create session token
