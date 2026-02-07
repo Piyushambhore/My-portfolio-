@@ -160,7 +160,7 @@
 
     <script src="script.js"></script>
     <script>
-        const API_BASE = ''; // Vercel serverless - same domain
+        const API_BASE = '/api'; // Vercel serverless functions
         const VISITED_KEY = 'piyush_visited';
 
         // --- VISITOR COUNTER ---
@@ -175,7 +175,7 @@
                     data = await res.json();
                     localStorage.setItem(VISITED_KEY, Date.now());
                 } else {
-                    const res = await fetch(`${API_BASE}/visitor/count`);
+                    const res = await fetch(`${API_BASE}/visitor`);
                     data = await res.json();
                 }
 
