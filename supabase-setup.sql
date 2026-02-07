@@ -61,4 +61,22 @@ CREATE POLICY "Allow public update" ON reactions FOR UPDATE USING (true);
 CREATE POLICY "Allow public read" ON feedback FOR SELECT USING (true);
 CREATE POLICY "Allow public insert" ON feedback FOR INSERT WITH CHECK (true);
 
+-- 5. Rate Limits table for tracking login attempts
+CREATE TABLE IF NOT EXISTS rate_limits (
+    id SERIAL PRIMARY KEY,
+    key TEXT NOT NULL,
+    ip TEXT NOT NULL,
+    type TEXT NOT NULL,
+    timestamp TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Index for faster queries
+CREATE INDEX IF NOT EXISTS idx_rate_limits_key_timestamp ON rate_limits(key, timestamp);
+
+-- RLS for rate_limits
+ALTER TABLE rate_limits ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read" ON rate_limits FOR SELECT USING (true);
+CREATE POLICY "Allow public insert" ON rate_limits FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public delete" ON rate_limits FOR DELETE USING (true);
+
 -- Done! Your database is ready 🎉

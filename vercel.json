@@ -1,7 +1,30 @@
 {
-    "version": 2,
-    "framework": null,
     "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "X-Content-Type-Options",
+                    "value": "nosniff"
+                },
+                {
+                    "key": "X-Frame-Options",
+                    "value": "DENY"
+                },
+                {
+                    "key": "X-XSS-Protection",
+                    "value": "1; mode=block"
+                },
+                {
+                    "key": "Referrer-Policy",
+                    "value": "strict-origin-when-cross-origin"
+                },
+                {
+                    "key": "Permissions-Policy",
+                    "value": "camera=(), microphone=(), geolocation=()"
+                }
+            ]
+        },
         {
             "source": "/api/(.*)",
             "headers": [
@@ -15,9 +38,19 @@
                 },
                 {
                     "key": "Access-Control-Allow-Headers",
-                    "value": "Content-Type, Authorization"
+                    "value": "Content-Type, Authorization, X-API-Key"
+                },
+                {
+                    "key": "Cache-Control",
+                    "value": "no-store, no-cache, must-revalidate"
                 }
             ]
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/api/posts/:id",
+            "destination": "/api/posts/[id]"
         }
     ]
 }

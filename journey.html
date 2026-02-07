@@ -279,6 +279,58 @@
             color: var(--text-primary);
         }
 
+        /* CAPTCHA Widget */
+        .captcha-widget {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .captcha-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .captcha-icon {
+            font-size: 1.2rem;
+        }
+
+        .captcha-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        .captcha-refresh {
+            background: transparent;
+            border: none;
+            color: var(--accent-blue);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .captcha-refresh:hover {
+            background: rgba(41, 151, 255, 0.1);
+            transform: rotate(180deg);
+        }
+
+        .captcha-question {
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .captcha-input {
+            margin-bottom: 0 !important;
+        }
+
         /* --- VISITOR NOTICE --- */
         .visitor-notice {
             background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(41, 151, 255, 0.1));
@@ -1454,6 +1506,21 @@
             <div class="modal-subtitle">Enter your password to post and manage entries.</div>
             <input type="password" class="modal-input" id="password-input" placeholder="Enter password..."
                 autocomplete="current-password">
+
+            <!-- CAPTCHA Widget -->
+            <div class="captcha-widget" id="captcha-widget">
+                <div class="captcha-header">
+                    <span class="captcha-icon" id="captcha-icon">🔢</span>
+                    <span class="captcha-label">Security Check</span>
+                    <button class="captcha-refresh" onclick="refreshCaptcha()" title="New question">
+                        <i class="ph-bold ph-arrows-clockwise"></i>
+                    </button>
+                </div>
+                <div class="captcha-question" id="captcha-question">Loading...</div>
+                <input type="text" class="modal-input captcha-input" id="captcha-answer" placeholder="Your answer..."
+                    autocomplete="off">
+            </div>
+
             <div class="modal-error" id="login-error">Invalid password. Try again.</div>
             <div class="modal-actions">
                 <button class="modal-btn secondary" onclick="hideLoginModal()">Cancel</button>
@@ -1491,32 +1558,63 @@
         let isAuthenticated = false;
         let currentTag = null;
         let currentSearch = '';
+        let currentCaptchaToken = null;
 
         // --- AUTH ---
         function getToken() { return localStorage.getItem(TOKEN_KEY); }
         function setToken(token) { localStorage.setItem(TOKEN_KEY, token); }
         function clearToken() { localStorage.removeItem(TOKEN_KEY); }
 
-        function showLoginModal() {
+        async function showLoginModal() {
             document.getElementById('login-modal').classList.add('show');
             document.getElementById('password-input').focus();
             document.getElementById('login-error').classList.remove('show');
+            await refreshCaptcha();
         }
 
         function hideLoginModal() {
             document.getElementById('login-modal').classList.remove('show');
             document.getElementById('password-input').value = '';
+            document.getElementById('captcha-answer').value = '';
+            currentCaptchaToken = null;
+        }
+
+        async function refreshCaptcha() {
+            try {
+                const res = await fetch(`${API_BASE}/captcha`);
+                const data = await res.json();
+                currentCaptchaToken = data.token;
+                document.getElementById('captcha-icon').textContent = data.icon || '🔢';
+                document.getElementById('captcha-question').textContent = data.question;
+                document.getElementById('captcha-answer').value = '';
+            } catch (e) {
+                document.getElementById('captcha-question').textContent = 'Error loading. Click refresh.';
+            }
         }
 
         async function doLogin() {
             const password = document.getElementById('password-input').value;
+            const captchaAnswer = document.getElementById('captcha-answer').value;
+            const errorEl = document.getElementById('login-error');
+
+            if (!captchaAnswer) {
+                errorEl.textContent = 'Please answer the security question.';
+                errorEl.classList.add('show');
+                return;
+            }
+
             try {
                 const res = await fetch(`${API_BASE}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password })
+                    body: JSON.stringify({
+                        password,
+                        captchaToken: currentCaptchaToken,
+                        captchaAnswer
+                    })
                 });
                 const data = await res.json();
+
                 if (data.success) {
                     setToken(data.token);
                     isAuthenticated = true;
@@ -1524,11 +1622,15 @@
                     updateAuthUI();
                     await loadData();
                 } else {
-                    document.getElementById('login-error').classList.add('show');
+                    errorEl.textContent = data.error || 'Invalid credentials.';
+                    errorEl.classList.add('show');
+                    if (data.requireCaptcha || data.error?.includes('CAPTCHA')) {
+                        await refreshCaptcha();
+                    }
                 }
             } catch (e) {
-                document.getElementById('login-error').textContent = 'Server offline. Try again later.';
-                document.getElementById('login-error').classList.add('show');
+                errorEl.textContent = 'Server offline. Try again later.';
+                errorEl.classList.add('show');
             }
         }
 
