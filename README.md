@@ -39,8 +39,7 @@ A premium, interactive personal portfolio website designed with an **Apple-inspi
 ---
 
 ### 📬 Connect with me
-- **Instagram:** [@yourhandle](https://instagram.com/)
 - **LinkedIn:** [Piyush Ambhore](https://linkedin.com/in)
-- **Email:** your@email.com
+- **Email:** support@piyushambhore.in
 
 © 2026 Piyush Ambhore. All Rights Reserved.
